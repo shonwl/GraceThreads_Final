@@ -84,7 +84,7 @@
         </aside>
 
         <main class="flex-1 px-8 py-8">
-            <span class="text-xs text-[#888888]">@AdminDataService.Orders.Count orders</span>
+            <span class="text-xs text-[#888888]">@Model.Orders.Count orders</span>
 
             <div class="border border-white/10 mt-4 overflow-x-auto">
                 <table class="w-full text-left text-xs">
@@ -99,12 +99,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var o in AdminDataService.Orders)
+                        @foreach (var o in Model.Orders)
                         {
                             <tr class="border-t border-white/10">
                                 <td class="px-4 py-3 font-bold text-neutral-100">@o.OrderId</td>
-                                <td class="px-4 py-3 text-neutral-100">@o.Customer</td>
-                                <td class="px-4 py-3 text-[#888888]">@o.Item</td>
+                                <td class="px-4 py-3 text-neutral-100">@o.User?.DisplayName</td>
+                                <td class="px-4 py-3 text-[#888888]">@string.Join(", ", o.Items?.Select(i => i.Product?.Name + (i.Product != null ? " — " + i.Product.Variant : string.Empty)) ?? new string[0])</td>
                                 <td class="px-4 py-3 text-[#888888]">@o.Date.ToString("MMM d, yyyy")</td>
                                 <td class="px-4 py-3">
                                     <span class="text-[9px] font-bold px-2 py-1 @(o.Status == "Delivered" ? "bg-green-500/10 text-green-400" : o.Status == "Shipped" ? "bg-blue-500/10 text-blue-400" : "bg-[#f05a1a]/10 text-[#f05a1a]")">@o.Status</span>

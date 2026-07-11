@@ -1,14 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace GraceThreads.Pages.Admin
 {
     public class SignOutModel : PageModel
     {
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
-            HttpContext.Session.Remove("IsAdmin");
-            HttpContext.Session.Remove("AdminUser");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToPage("/Index");
         }
     }

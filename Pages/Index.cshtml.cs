@@ -1,11 +1,29 @@
 using System.ComponentModel.DataAnnotations;
+using GraceThreads.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace GraceThreads.Pages
 {
     public class IndexModel : PageModel
     {
+
+        private readonly ApplicationDbContext _db;
+        private readonly IPasswordHasher<GraceThreads.Models.User> _passwordHasher;
+        private readonly ILogger<IndexModel> _logger;
+
+        public IndexModel(ApplicationDbContext db, IPasswordHasher<GraceThreads.Models.User> passwordHasher, ILogger<IndexModel> logger)
+        {
+            _db = db;
+            _passwordHasher = passwordHasher;
+            _logger = logger;
+        }
+
         [BindProperty]
         public InputModel Input { get; set; } = new();
 
@@ -17,37 +35,81 @@ namespace GraceThreads.Pages
             SuccessMessage = TempData["SuccessMessage"] as string;
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
+            var user = await ValidateCredentialsAsync(Input.Email, Input.Password);
 
-            // Admin login check
-            if (Input.Email.Equals("admin@gmail.com", StringComparison.OrdinalIgnoreCase) && Input.Password == "admin123")
-            {
-                HttpContext.Session.SetString("IsAdmin", "true");
-                HttpContext.Session.SetString("AdminUser", "Admin User");
-                return RedirectToPage("/Admin/Dashboard");
-            }
-
-            bool isValid = ValidateCredentials(Input.Email, Input.Password);
-
-            if (!isValid)
+            if (user == null)
             {
                 ErrorMessage = "Invalid email or password.";
                 return Page();
             }
 
-            TempData["WelcomeMessage"] = $"Welcome back, {Input.Email}!";
+            TempData["WelcomeMessage"] = $"Welcome back, {user.DisplayName ?? user.Email}!";
+            // Redirect based on role
+            if (user.Role == 0)
+            {
+                return RedirectToPage("/Admin/Dashboard");
+            }
             return RedirectToPage("Home");
         }
-
-        private bool ValidateCredentials(string email, string password)
+        private async Task<GraceThreads.Models.User?> ValidateCredentialsAsync(string email, string password)
         {
-            // TODO: replace with real authentication (EF Core / Identity / your API).
-            return true;
+            email = email?.Trim().ToLowerInvariant() ?? string.Empty;
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email);
+            if (user == null)
+            {
+                _logger.LogWarning("Login failed: no user found for email {Email}", email);
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(user.PasswordHash))
+            {
+                _logger.LogWarning("Login failed: user {UserId} has empty PasswordHash", user.Id);
+                return null;
+            }
+
+            var verify = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+            _logger.LogInformation("Password verification for user {UserId}: {Result}", user.Id, verify.ToString());
+            if (verify == PasswordVerificationResult.Failed) return null;
+
+            // Update LastLoginAt using database server time (SYSUTCDATETIME) to ensure DB-side timestamp
+            try
+            {
+                await _db.Database.ExecuteSqlInterpolatedAsync($"UPDATE [Users] SET LastLoginAt = SYSUTCDATETIME() WHERE Id = {user.Id}");
+                // Refresh the tracked entity to pick up DB-generated LastLoginAt
+                await _db.Entry(user).ReloadAsync();
+            }
+            catch
+            {
+                // Fallback: set from application server time if DB update fails
+                user.LastLoginAt = DateTimeOffset.UtcNow;
+                await _db.SaveChangesAsync();
+            }
+
+            // Create claims and sign in using cookie authentication
+            var roleName = user.Role == 0 ? "Admin" : "Customer";
+            var lastLoginStr = user.LastLoginAt?.ToString("o") ?? string.Empty;
+
+            var claims = new List<System.Security.Claims.Claim>
+            {
+                new(System.Security.Claims.ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(System.Security.Claims.ClaimTypes.Name, user.DisplayName ?? user.Email),
+                new(System.Security.Claims.ClaimTypes.Email, user.Email),
+                new(System.Security.Claims.ClaimTypes.Role, roleName),
+                new("LastLoginAt", lastLoginStr)
+            };
+
+            var identity = new System.Security.Claims.ClaimsIdentity(claims, Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new System.Security.Claims.ClaimsPrincipal(identity);
+            // Ensure authentication extension methods are available
+            await this.HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            return user;
         }
 
         public class InputModel

@@ -1,11 +1,18 @@
 ﻿<div id="admin-drawer-overlay" class="fixed inset-0 bg-black/60 z-40" onclick="toggleAdminDrawer()"></div>
 <aside id="admin-drawer" class="fixed top-0 right-0 h-full w-full max-w-[340px] bg-[#161616] z-50 flex flex-col border-l border-white/10">
+    @{ 
+        var adminName = User?.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? User?.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "Admin";
+        var lastLoginRaw = User?.FindFirst("LastLoginAt")?.Value;
+        DateTimeOffset? lastLogin = null;
+        if (!string.IsNullOrEmpty(lastLoginRaw) && DateTimeOffset.TryParse(lastLoginRaw, out var parsed)) lastLogin = parsed;
+        var initial = string.IsNullOrEmpty(adminName) ? "A" : adminName.Substring(0,1).ToUpper();
+    }
     <div class="px-6 py-6 border-b border-white/10">
         <div class="w-14 h-14 rounded-full bg-[#f05a1a] flex items-center justify-center mx-auto">
-            <span class="font-black text-xl text-white">A</span>
+            <span class="font-black text-xl text-white">@initial</span>
         </div>
         <div class="text-center mt-3">
-            <span class="block font-black text-sm text-neutral-100">Admin User</span>
+            <span class="block font-black text-sm text-neutral-100">@adminName</span>
             <span class="inline-block mt-1 text-[9px] font-bold text-green-400 bg-green-500/10 px-2 py-1">● Active</span>
         </div>
     </div>
@@ -20,7 +27,7 @@
         </div>
         <div>
             <span class="block text-[10px] text-[#888888]">Last Login</span>
-            <span class="block text-sm text-neutral-100 mt-0.5">@DateTime.Now.ToString("MMM d, yyyy")</span>
+            <span class="block text-sm text-neutral-100 mt-0.5">@(lastLogin.HasValue ? lastLogin.Value.ToString("MMM d, yyyy") : "—")</span>
         </div>
     </div>
     <div class="px-6 py-5 flex flex-col gap-3">

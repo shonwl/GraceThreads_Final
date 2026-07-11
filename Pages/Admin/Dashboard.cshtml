@@ -97,22 +97,22 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-[#161616] border border-white/10 p-5">
                     <span class="text-[#f05a1a] text-lg">$</span>
-                    <span class="block font-black text-2xl text-neutral-100 mt-2">$@AdminDataService.TotalRevenue.ToString("0")</span>
+                    <span class="block font-black text-2xl text-neutral-100 mt-2">$@Model.TotalRevenue.ToString("0")</span>
                     <span class="block text-[10px] text-[#888888] mt-1">Total Revenue</span>
                 </div>
                 <div class="bg-[#161616] border border-white/10 p-5">
                     <span class="text-blue-400 text-lg">🛒</span>
-                    <span class="block font-black text-2xl text-neutral-100 mt-2">@AdminDataService.TotalOrders</span>
+                    <span class="block font-black text-2xl text-neutral-100 mt-2">@Model.TotalOrders</span>
                     <span class="block text-[10px] text-[#888888] mt-1">Total Orders</span>
                 </div>
                 <div class="bg-[#161616] border border-white/10 p-5">
                     <span class="text-green-400 text-lg"></span>
-                    <span class="block font-black text-2xl text-neutral-100 mt-2">@AdminDataService.TotalProducts</span>
+                    <span class="block font-black text-2xl text-neutral-100 mt-2">@Model.TotalProducts</span>
                     <span class="block text-[10px] text-[#888888] mt-1">Products</span>
                 </div>
                 <div class="bg-[#161616] border border-white/10 p-5">
                     <span class="text-purple-400 text-lg"></span>
-                    <span class="block font-black text-2xl text-neutral-100 mt-2">@AdminDataService.ActiveListings</span>
+                    <span class="block font-black text-2xl text-neutral-100 mt-2">@Model.ActiveListings</span>
                     <span class="block text-[10px] text-[#888888] mt-1">Active Listings</span>
                 </div>
             </div>
@@ -123,12 +123,12 @@
                     <a href="/Admin/Orders" class="text-[10px] font-bold text-[#f05a1a]">View All</a>
                 </div>
                 <div class="flex flex-col gap-3 mt-4">
-                    @foreach (var order in AdminDataService.Orders.Take(3))
+                    @foreach (var order in Model.RecentOrders)
                     {
                         <div class="flex justify-between items-center border-b border-white/10 pb-3">
                             <div>
-                                <span class="block text-xs font-bold text-neutral-100">@order.OrderId @order.Customer</span>
-                                <span class="block text-[10px] text-[#888888] mt-0.5">@order.Item</span>
+                                <span class="block text-xs font-bold text-neutral-100">@order.OrderId @order.User?.DisplayName</span>
+                                <span class="block text-[10px] text-[#888888] mt-0.5">@string.Join(", ", order.Items?.Select(i => i.Product?.Name + (i.Product != null ? " — " + i.Product.Variant.Split(' ')[0] : string.Empty)) ?? new string[0])</span>
                             </div>
                             <div class="flex items-center gap-3">
                                 <span class="text-[9px] font-bold px-2 py-1 @(order.Status == "Delivered" ? "bg-green-500/10 text-green-400" : order.Status == "Shipped" ? "bg-blue-500/10 text-blue-400" : "bg-[#f05a1a]/10 text-[#f05a1a]")">@order.Status</span>
@@ -145,7 +145,7 @@
                     <a href="/Admin/Products" class="text-[10px] font-bold text-[#f05a1a]">Manage</a>
                 </div>
                 <div class="flex flex-col gap-3 mt-4">
-                    @foreach (var product in AdminDataService.Products)
+                    @foreach (var product in Model.RecentProducts)
                     {
                         <div class="flex justify-between items-center border-b border-white/10 pb-3">
                             <div class="flex items-center gap-3">
