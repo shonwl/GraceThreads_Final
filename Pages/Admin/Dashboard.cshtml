@@ -1,0 +1,228 @@
+﻿@page
+@model GraceThreads.Pages.Admin.DashboardModel
+@using GraceThreads.Services
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grace Threads — Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+        font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        }
+
+        body {
+        background: #0c0c0c;
+        }
+
+        #admin-drawer {
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        }
+
+        #admin-drawer.open {
+        transform: translateX(0);
+        }
+
+        #admin-drawer-overlay {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        }
+
+        #admin-drawer-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-[#0c0c0c] text-white">
+
+    <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+    </div>
+
+    <header class="border-b border-white/10">
+        <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+            <a href="/Admin/Dashboard" class="flex items-center gap-3">
+                <div class="w-[34px] h-[34px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
+                    <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-6 h-6 object-contain">
+                </div>
+                <div class="leading-tight">
+                    <div class="font-black text-lg text-neutral-100">Grace Threads</div>
+                    <div class="font-medium text-[9px] text-[#888888] tracking-wide">Admin</div>
+                </div>
+            </a>
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="/Home" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Home</a>
+                <a href="/Catalog" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Shop</a>
+            </nav>
+            <div class="flex items-center gap-3">
+                <span class="border border-white/20 text-[10px] font-bold text-neutral-100 px-3 py-1.5">📊 Dashboard</span>
+                <button onclick="toggleAdminDrawer()" class="w-8 h-8 rounded-full bg-[#f05a1a] flex items-center justify-center">
+                    <span class="text-xs font-black text-white">A</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <partial name="_AdminAccountDrawer" />
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-56 shrink-0 border-r border-white/10 min-h-[calc(100vh-105px)] px-4 py-6">
+            <a href="/Admin/Dashboard" class="flex items-center gap-2 px-3 py-2.5 bg-[#f05a1a] text-white text-xs font-bold">
+                Overview
+            </a>
+            <a href="/Admin/Products" class="flex items-center gap-2 px-3 py-2.5 mt-1 text-[#888888] hover:text-white transition text-xs font-bold">
+                Products
+            </a>
+            <a href="/Admin/Orders" class="flex items-center gap-2 px-3 py-2.5 mt-1 text-[#888888] hover:text-white transition text-xs font-bold">
+                Orders
+            </a>
+            <a href="/Home" class="flex items-center gap-2 px-3 py-2.5 mt-8 border-t border-white/10 pt-4 text-[#888888] hover:text-white transition text-xs font-bold">
+                ← Exit Admin
+            </a>
+        </aside>
+
+        <!-- Main -->
+        <main class="flex-1 px-8 py-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-[#161616] border border-white/10 p-5">
+                    <span class="text-[#f05a1a] text-lg">$</span>
+                    <span class="block font-black text-2xl text-neutral-100 mt-2">$@AdminDataService.TotalRevenue.ToString("0")</span>
+                    <span class="block text-[10px] text-[#888888] mt-1">Total Revenue</span>
+                </div>
+                <div class="bg-[#161616] border border-white/10 p-5">
+                    <span class="text-blue-400 text-lg">🛒</span>
+                    <span class="block font-black text-2xl text-neutral-100 mt-2">@AdminDataService.TotalOrders</span>
+                    <span class="block text-[10px] text-[#888888] mt-1">Total Orders</span>
+                </div>
+                <div class="bg-[#161616] border border-white/10 p-5">
+                    <span class="text-green-400 text-lg"></span>
+                    <span class="block font-black text-2xl text-neutral-100 mt-2">@AdminDataService.TotalProducts</span>
+                    <span class="block text-[10px] text-[#888888] mt-1">Products</span>
+                </div>
+                <div class="bg-[#161616] border border-white/10 p-5">
+                    <span class="text-purple-400 text-lg"></span>
+                    <span class="block font-black text-2xl text-neutral-100 mt-2">@AdminDataService.ActiveListings</span>
+                    <span class="block text-[10px] text-[#888888] mt-1">Active Listings</span>
+                </div>
+            </div>
+
+            <div class="bg-[#161616] border border-white/10 mt-6 p-5">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-neutral-100">Recent Orders</span>
+                    <a href="/Admin/Orders" class="text-[10px] font-bold text-[#f05a1a]">View All</a>
+                </div>
+                <div class="flex flex-col gap-3 mt-4">
+                    @foreach (var order in AdminDataService.Orders.Take(3))
+                    {
+                        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                            <div>
+                                <span class="block text-xs font-bold text-neutral-100">@order.OrderId @order.Customer</span>
+                                <span class="block text-[10px] text-[#888888] mt-0.5">@order.Item</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-[9px] font-bold px-2 py-1 @(order.Status == "Delivered" ? "bg-green-500/10 text-green-400" : order.Status == "Shipped" ? "bg-blue-500/10 text-blue-400" : "bg-[#f05a1a]/10 text-[#f05a1a]")">@order.Status</span>
+                                <span class="text-xs font-bold text-[#f05a1a]">$@order.Total.ToString("0")</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="bg-[#161616] border border-white/10 mt-6 p-5">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-neutral-100">Products</span>
+                    <a href="/Admin/Products" class="text-[10px] font-bold text-[#f05a1a]">Manage</a>
+                </div>
+                <div class="flex flex-col gap-3 mt-4">
+                    @foreach (var product in AdminDataService.Products)
+                    {
+                        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                            <div class="flex items-center gap-3">
+                                <img src="@product.ImageUrl" class="w-8 h-8 object-contain bg-[#1a1a1a]" alt="">
+                                <div>
+                                    <span class="block text-xs font-bold text-neutral-100">@product.Name — @product.Variant.Split(' ')[0]</span>
+                                </div>
+                            </div>
+                            <span class="text-xs font-bold text-[#f05a1a]">$@product.Price.ToString("0")</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <section class="bg-[#1a1a1a] px-6 py-20">
+        <div class="max-w-[512px] mx-auto flex flex-col items-center text-center">
+            <span class="text-[11px] font-bold text-[#f05a1a] tracking-wide">Join The Movement</span>
+            <h2 class="font-black text-3xl text-neutral-100 mt-3">Early Access to Every Drop</h2>
+            <p class="text-sm text-[#888888] mt-4">Be first for new releases, restocks, and exclusive Grace Threads content.</p>
+            <div class="flex w-full max-w-sm mt-8">
+                <input type="email" placeholder="your@email.com" class="flex-1 h-12 bg-[#222222] border border-white/10 px-4 text-sm text-white placeholder:text-[#666666]">
+                <button class="bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[11px] font-black px-7">Subscribe</button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-[#161616] border-t border-white/10 px-6 pt-14 pb-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-[30px] h-[30px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
+                            <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-5 h-5 object-contain">
+                        </div>
+                        <span class="font-black text-base text-neutral-100">Grace Threads</span>
+                    </div>
+                    <p class="text-[12px] text-[#888888] leading-[19.5px] mt-5">Faith. Style. Grace.<br>We wear what we believe.</p>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Shop</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-medium text-[#888888]">
+                        <li><a href="/Catalog" class="hover:text-white transition">All Products</a></li>
+                        <li><a href="/Catalog" class="hover:text-white transition">Saved By Grace Tee</a></li>
+                        <li><a href="/Catalog" class="hover:text-white transition">Hoodies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Help</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-medium text-[#888888]">
+                        <li><a href="/Contact" class="hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Size Guide</a></li>
+                        <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Connect</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-normal text-[#888888]">
+                        <li><a href="#" class="hover:text-white transition">Instagram</a></li>
+                        <li><a href="#" class="hover:text-white transition">Facebook</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 mt-12 border-t border-white/10">
+                <span class="text-xs text-[#888888]">© 2025 Grace Threads. All rights reserved.</span>
+                <span class="text-[10px] font-bold text-[#f05a1a]">Ephesians 2:8</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleAdminDrawer() {
+        document.getElementById('admin-drawer').classList.toggle('open');
+        document.getElementById('admin-drawer-overlay').classList.toggle('open');
+        }
+    </script>
+
+</body>
+</html>

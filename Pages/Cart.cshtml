@@ -1,0 +1,124 @@
+﻿@page
+@model GraceThreads.Pages.CartModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grace Threads — Your Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+        font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        }
+
+        body {
+        background: #0c0c0c;
+        }
+    </style>
+</head>
+<body class="bg-[#0c0c0c] text-white">
+
+    <!-- Promo bar -->
+    <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+    </div>
+
+    <!-- Nav -->
+    <header class="border-b border-white/10">
+        <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+            <a href="/Home" class="flex items-center gap-3">
+                <div class="w-[34px] h-[34px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
+                    <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-6 h-6 object-contain">
+                </div>
+                <div class="leading-tight">
+                    <div class="font-black text-lg text-neutral-100">Grace Threads</div>
+                    <div class="font-medium text-[9px] text-[#888888] tracking-wide">We Wear What We Believe</div>
+                </div>
+            </a>
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="/Home" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Home</a>
+                <a href="/Catalog" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Shop</a>
+                <a href="/Contact" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Cart contents -->
+    <section class="px-6 py-16">
+        <div class="max-w-4xl mx-auto">
+            <a href="/Catalog" class="text-[11px] font-bold text-[#888888] hover:text-white transition">← Back to Shop</a>
+            <h1 class="font-black text-5xl text-neutral-100 mt-4">Your Cart</h1>
+
+            @if (!Model.CartItems.Any())
+            {
+                <div class="flex flex-col items-center justify-center gap-4 py-24 border border-white/10 mt-10">
+                    <svg viewBox="0 0 24 24" class="w-12 h-12" fill="none" stroke="#888888" stroke-width="1.5">
+                        <path d="M6 6h15l-1.5 9h-12z" stroke-linejoin="round" />
+                        <path d="M6 6L5 3H2" stroke-linecap="round" />
+                        <circle cx="9" cy="20" r="1" fill="#888888" />
+                        <circle cx="18" cy="20" r="1" fill="#888888" />
+                    </svg>
+                    <span class="font-black text-sm text-[#888888]">Your cart is empty</span>
+                    <a href="/Catalog" class="mt-2 bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[11px] font-black px-8 py-3.5">
+                        Browse Products
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="flex flex-col gap-4 mt-10">
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <div class="flex items-center gap-5 bg-[#161616] border border-white/10 p-5">
+                            <div class="w-20 h-20 shrink-0" style="background-color:@item.ColorHex; opacity:0.85;"></div>
+                            <div class="flex-1">
+                                <span class="block font-black text-base text-neutral-100">@item.ProductName</span>
+                                <span class="block text-xs text-[#888888] mt-1">@item.Variant</span>
+                                <span class="block text-xs text-[#888888] mt-1">Qty: @item.Quantity</span>
+                            </div>
+                            <span class="font-black text-lg text-[#f05a1a]">$@((item.Price * item.Quantity).ToString("0.00"))</span>
+                            <form method="post" asp-page-handler="Remove">
+                                <input type="hidden" name="productName" value="@item.ProductName" />
+                                <input type="hidden" name="variant" value="@item.Variant" />
+                                <button type="submit" aria-label="Remove item" class="text-[#888888] hover:text-red-400 transition p-2">
+                                    <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                </div>
+
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6 mt-10 border-t border-white/10 pt-8">
+                    <form method="post" asp-page-handler="Clear">
+                        <button type="submit" class="text-[11px] font-bold text-[#888888] hover:text-white transition">Clear Cart</button>
+                    </form>
+                    <div class="flex flex-col items-end gap-4">
+                        <div class="flex items-center gap-4">
+                            <span class="text-sm text-[#888888]">Total</span>
+                            <span class="font-black text-2xl text-neutral-100">$@Model.Total.ToString("0.00")</span>
+                        </div>
+                        <button type="button" class="bg-[#f05a1a] hover:bg-[#d94f14] transition text-white font-black text-sm px-10 py-4">
+                            Proceed to Checkout
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#161616] border-t border-white/10 px-6 py-8 text-center">
+        <span class="text-xs text-[#888888]">© 2025 Grace Threads. All rights reserved.</span>
+        <span class="block text-[10px] font-bold text-[#f05a1a] mt-1">Ephesians 2:8</span>
+    </footer>
+
+</body>
+</html>

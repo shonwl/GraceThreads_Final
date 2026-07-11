@@ -1,0 +1,408 @@
+﻿@page
+@model GraceThreads.Pages.ProductModel
+@using GraceThreads.Models
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grace Threads — @Model.ProductName</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+        font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        }
+
+        body {
+        background: #0c0c0c;
+        }
+
+        #cart-panel {
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        }
+
+        #cart-panel.open {
+        transform: translateX(0);
+        }
+
+        #cart-overlay {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        }
+
+        #cart-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+        }
+
+        #chat-panel {
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        }
+
+        #chat-panel.open {
+        transform: translateX(0);
+        }
+
+        #chat-overlay {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        }
+
+        #chat-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+        }
+
+        #search-bar {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.25s ease;
+        }
+
+        #search-bar.open {
+        max-height: 80px;
+        }
+
+        .size-btn.selected {
+        background: #f05a1a;
+        border-color: #f05a1a;
+        color: #fff;
+        }
+    </style>
+</head>
+<body class="bg-[#0c0c0c] text-white">
+
+    <!-- Promo bar -->
+    <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+    </div>
+
+    <!-- Nav -->
+    <header class="border-b border-white/10 relative">
+        <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+            <a href="/Home" class="flex items-center gap-3">
+                <div class="w-[34px] h-[34px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
+                    <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-6 h-6 object-contain">
+                </div>
+                <div class="leading-tight">
+                    <div class="font-black text-lg text-neutral-100">Grace Threads</div>
+                    <div class="font-medium text-[9px] text-[#888888] tracking-wide">We Wear What We Believe</div>
+                </div>
+            </a>
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="/Home" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Home</a>
+                <a href="/Catalog" class="text-[11px] font-bold text-[#f05a1a]">Shop</a>
+                <a href="/Contact" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Contact</a>
+                <a href="/" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Sign Out</a>
+            </nav>
+            <div class="flex items-center gap-5">
+                <button aria-label="Search" onclick="toggleSearch()">
+                    <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="#cccccc" stroke-width="2">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+                    </svg>
+                </button>
+                <button aria-label="Cart" onclick="toggleCart()">
+                    <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="#cccccc" stroke-width="2">
+                        <path d="M6 6h15l-1.5 9h-12z" stroke-linejoin="round" />
+                        <path d="M6 6L5 3H2" stroke-linecap="round" />
+                        <circle cx="9" cy="20" r="1" fill="#cccccc" />
+                        <circle cx="18" cy="20" r="1" fill="#cccccc" />
+                    </svg>
+                </button>
+                <button aria-label="Ask a question" onclick="toggleChat()">
+                    <img src="/images/Grace_Threads_Logo_white_1.png" alt="Ask a question" class="w-[18px] h-[18px] object-contain">
+                </button>
+            </div>
+        </div>
+        <div id="search-bar" class="border-t border-white/10 bg-[#0c0c0c]">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex items-center gap-3">
+                <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0" fill="none" stroke="#888888" stroke-width="2">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+                </svg>
+                <input type="text" placeholder="Search products..." class="flex-1 bg-transparent text-sm text-white placeholder:text-[#888888] focus:outline-none">
+                <button aria-label="Close search" onclick="toggleSearch()">
+                    <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="#888888" stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <partial name="_CartPanel" model="Model.CartItems" />
+
+    <!-- Chat overlay + panel -->
+    <div id="chat-overlay" class="fixed inset-0 bg-black/60 z-40" onclick="toggleChat()"></div>
+    <aside id="chat-panel" class="fixed top-0 right-0 h-full w-full max-w-[448px] bg-[#161616] z-50 flex flex-col border-l border-white/10">
+        <div class="flex justify-between items-center px-6 py-5 border-b border-white/10">
+            <div class="flex items-center gap-2">
+                <img src="/images/Grace_Threads_Logo_white_1.png" alt="" class="w-[18px] h-[18px] object-contain">
+                <span class="font-black text-sm text-neutral-100">Ask About This Tee</span>
+            </div>
+            <button aria-label="Close chat" onclick="toggleChat()">
+                <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="#888888" stroke-width="2">
+                    <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="chat-messages" class="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-4">
+            <div class="flex flex-col items-center justify-center gap-4 h-full text-center">
+                <div class="w-10 h-10 rounded-full bg-[#f05a1a]/10 flex items-center justify-center">
+                    <img src="/images/Grace_Threads_Logo_white_1.png" alt="" class="w-5 h-5 object-contain">
+                </div>
+                <span class="text-sm font-bold text-neutral-100">Got a question about sizing, fabric, or fit?</span>
+                <span class="text-xs text-[#888888] max-w-[280px]">Ask below and we'll get you an answer about the @Model.ColorLabel Saved By Grace Tee.</span>
+            </div>
+        </div>
+
+        <form id="chat-form" class="flex items-center gap-2 px-4 py-4 border-t border-white/10" onsubmit="sendChatMessage(event)">
+            <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off"
+                   class="flex-1 h-11 bg-[#222222] border border-white/10 px-4 text-sm text-white placeholder:text-[#666666] focus:outline-none focus:border-[#f05a1a]">
+            <button type="submit" aria-label="Send" class="w-11 h-11 flex items-center justify-center bg-[#f05a1a] hover:bg-[#d94f14] transition shrink-0">
+                <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="white" stroke-width="2">
+                    <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+        </form>
+    </aside>
+
+    <!-- Product detail -->
+    <section class="px-6 py-10">
+        <div class="max-w-7xl mx-auto">
+            <a href="/Catalog" class="flex items-center gap-2 text-[11px] font-bold text-[#888888] hover:text-white transition">← Back to Shop</a>
+
+            <div class="grid md:grid-cols-2 gap-10 mt-10">
+                <!-- Image + thumbnails -->
+                <div>
+                    <div class="bg-[#1a1a1a] flex items-center justify-center p-8">
+                        <img id="main-product-image" src="@Model.ImageFront" alt="@Model.ProductName — @Model.ColorLabel" class="max-w-full max-h-[576px] object-contain">
+                    </div>
+                    <div class="flex gap-3 mt-3">
+                        @for (int i = 0; i < Model.Thumbnails.Count; i++)
+                        {
+                            <button type="button" onclick="selectThumbnail('@Model.Thumbnails[i]', this)"
+                                    class="thumb-btn flex-1 aspect-square bg-[#1a1a1a] border-2 @(i == 0 ? "border-[#f05a1a]" : "border-transparent") p-2 transition">
+                                <img src="@Model.Thumbnails[i]" alt="View @(i + 1)" class="w-full h-full object-contain">
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Details -->
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span class="inline-block text-white text-[10px] font-bold px-3 py-1" style="background-color:@Model.ColorHex;">New Drop</span>
+                        <span class="text-[10px] text-[#888888]">Grace Threads · Tees</span>
+                    </div>
+                    <h1 class="font-black text-4xl text-neutral-100 mt-4">@Model.ProductName</h1>
+                    <span class="block text-[11px] text-[#888888] mt-2">@Model.ColorLabel Colourway</span>
+                    <span class="block font-black text-2xl text-[#f05a1a] mt-4">$@Model.Price.ToString("0") USD</span>
+
+                    <p class="text-sm text-[#888888] leading-relaxed mt-6">
+                        The @Model.ColorLabel.ToLower() colourway of our flagship tee. Bold 4K screen-printed graphic on the back, small chest hit on the front, and full Grace Threads brand detailing throughout.
+                    </p>
+
+                    <form method="post" id="product-form" class="mt-8">
+                        <input type="hidden" name="color" value="@Model.Color" />
+                        <input type="hidden" name="size" id="selected-size" value="M" />
+                        <input type="hidden" name="quantity" id="selected-quantity" value="1" />
+
+                        <!-- Size -->
+                        <div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-[11px] font-bold text-neutral-100">Size</span>
+                                <span class="text-[10px] font-medium text-[#888888]">Size Guide</span>
+                            </div>
+                            <div class="flex gap-2 mt-3">
+                                @foreach (var s in new[] { "S", "M", "L", "XL", "2XL" })
+                                {
+                                    <button type="button" onclick="selectSize('@s', this)"
+                                            class="size-btn w-12 h-12 flex items-center justify-center border border-white/30 text-sm font-bold text-neutral-100 transition @(s == "M" ? "selected" : "")">
+                                        @s
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="mt-6">
+                            <span class="text-[11px] font-bold text-neutral-100">Quantity</span>
+                            <div class="flex items-center mt-3 w-[130px] border border-white/30">
+                                <button type="button" onclick="changeQty(-1)" class="w-11 h-11 flex items-center justify-center text-white hover:bg-white/10 transition">−</button>
+                                <span id="qty-display" class="flex-1 text-center text-sm font-bold text-neutral-100">1</span>
+                                <button type="button" onclick="changeQty(1)" class="w-11 h-11 flex items-center justify-center text-white hover:bg-white/10 transition">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex flex-col gap-3 mt-8">
+                            <button type="submit" asp-page-handler="AddToCart"
+                                    class="border-2 border-[#f05a1a] text-[#f05a1a] hover:bg-[#f05a1a] hover:text-white transition font-black text-sm py-4">
+                                Add to Cart
+                            </button>
+                            <button type="submit" asp-page-handler="BuyNow"
+                                    class="bg-[#f05a1a] hover:bg-[#d94f14] transition text-white font-black text-sm py-4">
+                                Buy It Now
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Features -->
+                    <div class="border-t border-white/10 mt-8 pt-6">
+                        <span class="text-[11px] font-bold text-neutral-100">Features & Details</span>
+                        <ul class="flex flex-col gap-2.5 mt-4">
+                            <li class="flex gap-3 text-xs text-[#888888]"><span class="w-1 h-1 mt-1.5 bg-[#f05a1a] rounded-full shrink-0"></span>100% premium heavyweight cotton</li>
+                            <li class="flex gap-3 text-xs text-[#888888]"><span class="w-1 h-1 mt-1.5 bg-[#f05a1a] rounded-full shrink-0"></span>4K screen-printed back graphic</li>
+                            <li class="flex gap-3 text-xs text-[#888888]"><span class="w-1 h-1 mt-1.5 bg-[#f05a1a] rounded-full shrink-0"></span>Small chest print — Saved By Grace</li>
+                            <li class="flex gap-3 text-xs text-[#888888]"><span class="w-1 h-1 mt-1.5 bg-[#f05a1a] rounded-full shrink-0"></span>Custom woven inner tag & sleeve mark</li>
+                            <li class="flex gap-3 text-xs text-[#888888]"><span class="w-1 h-1 mt-1.5 bg-[#f05a1a] rounded-full shrink-0"></span>Do not iron on print · Wash at 40°</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Design showcase -->
+            <div class="grid md:grid-cols-2 gap-1 mt-16">
+                <div class="h-[220px] overflow-hidden bg-white">
+                    <img src="/images/SAVED_ORANGE.png" alt="Saved By Grace design — orange" class="w-full h-full object-cover object-center">
+                </div>
+                <div class="h-[220px] overflow-hidden bg-white">
+                    <img src="/images/SAVED_BLUE.png" alt="Saved By Grace design — blue" class="w-full h-full object-cover object-center">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="bg-[#1a1a1a] px-6 py-20">
+        <div class="max-w-[512px] mx-auto flex flex-col items-center text-center">
+            <span class="text-[11px] font-bold text-[#f05a1a] tracking-wide">Join The Movement</span>
+            <h2 class="font-black text-3xl text-neutral-100 mt-3">Early Access to Every Drop</h2>
+            <p class="text-sm text-[#888888] mt-4">Be first for new releases, restocks, and exclusive Grace Threads content.</p>
+            <div class="flex w-full max-w-sm mt-8">
+                <input type="email" placeholder="your@email.com" class="flex-1 h-12 bg-[#222222] border border-white/10 px-4 text-sm text-white placeholder:text-[#666666]">
+                <button class="bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[11px] font-black px-7">Subscribe</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#161616] border-t border-white/10 px-6 pt-14 pb-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-[30px] h-[30px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
+                            <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-5 h-5 object-contain">
+                        </div>
+                        <span class="font-black text-base text-neutral-100">Grace Threads</span>
+                    </div>
+                    <p class="text-[12px] text-[#888888] leading-[19.5px] mt-5">Faith. Style. Grace.<br>We wear what we believe.</p>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Shop</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-medium text-[#888888]">
+                        <li><a href="/Catalog" class="hover:text-white transition">All Products</a></li>
+                        <li><a href="/Catalog" class="hover:text-white transition">Saved By Grace Tee</a></li>
+                        <li><a href="/Catalog" class="hover:text-white transition">Hoodies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Help</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-medium text-[#888888]">
+                        <li><a href="/Contact" class="hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Size Guide</a></li>
+                        <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Connect</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-normal text-[#888888]">
+                        <li><a href="#" class="hover:text-white transition">Instagram</a></li>
+                        <li><a href="#" class="hover:text-white transition">Facebook</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 mt-12 border-t border-white/10">
+                <span class="text-xs text-[#888888]">© 2025 Grace Threads. All rights reserved.</span>
+                <span class="text-[10px] font-bold text-[#f05a1a]">Ephesians 2:8</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let qty = 1;
+        function changeQty(delta) {
+        qty = Math.max(1, qty + delta);
+        document.getElementById('qty-display').textContent = qty;
+        document.getElementById('selected-quantity').value = qty;
+        }
+        function selectSize(size, btn) {
+        document.getElementById('selected-size').value = size;
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        }
+        function toggleCart() {
+        document.getElementById('cart-panel').classList.toggle('open');
+        document.getElementById('cart-overlay').classList.toggle('open');
+        }
+        function toggleSearch() {
+        document.getElementById('search-bar').classList.toggle('open');
+        }
+        function toggleChat() {
+        document.getElementById('chat-panel').classList.toggle('open');
+        document.getElementById('chat-overlay').classList.toggle('open');
+        }
+        function sendChatMessage(event) {
+        event.preventDefault();
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        const messages = document.getElementById('chat-messages');
+        const emptyState = messages.querySelector('.flex-col.items-center.justify-center');
+        if (emptyState) {
+        messages.innerHTML = '';
+        }
+
+        const userBubble = document.createElement('div');
+        userBubble.className = 'self-end max-w-[80%] bg-[#f05a1a] text-white text-sm px-4 py-2.5';
+        userBubble.textContent = text;
+        messages.appendChild(userBubble);
+
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+
+        setTimeout(() => {
+        const replyBubble = document.createElement('div');
+        replyBubble.className = 'self-start max-w-[80%] bg-[#222222] text-[#cccccc] text-sm px-4 py-2.5';
+        replyBubble.textContent = "Thanks for your question! Our team will follow up shortly — for anything urgent, use the Contact page.";
+        messages.appendChild(replyBubble);
+        messages.scrollTop = messages.scrollHeight;
+        }, 600);
+        }
+        function selectThumbnail(src, btn) {
+        document.getElementById('main-product-image').src = src;
+        document.querySelectorAll('.thumb-btn').forEach(b => {
+        b.classList.remove('border-[#f05a1a]');
+        b.classList.add('border-transparent');
+        });
+        btn.classList.remove('border-transparent');
+        btn.classList.add('border-[#f05a1a]');
+        }
+    </script>
+
+</body>
+</html>

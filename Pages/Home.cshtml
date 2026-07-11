@@ -1,0 +1,445 @@
+﻿@page
+@model GraceThreads.Pages.HomeModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grace Threads — Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+        font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        }
+
+        body {
+        background: #0c0c0c;
+        }
+
+        @@keyframes marquee {
+        0% {
+        transform: translateX(0);
+        }
+
+        100% {
+        transform: translateX(-50%);
+        }
+        }
+
+        .marquee-track {
+        animation: marquee 22s linear infinite;
+        white-space: nowrap;
+        }
+
+        .placeholder-img {
+        background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 12px);
+        }
+
+        #cart-panel {
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        }
+
+        #cart-panel.open {
+        transform: translateX(0);
+        }
+
+        #cart-overlay, #search-overlay {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        }
+
+        #cart-overlay.open, #search-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+        }
+
+        #search-bar {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.25s ease;
+        }
+
+        #search-bar.open {
+        max-height: 80px;
+        }
+    </style>
+</head>
+<body class="bg-[#0c0c0c] text-white">
+
+    <!-- Promo bar -->
+    <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+    </div>
+
+    <!-- Nav -->
+    <header class="border-b border-white/10 relative">
+        <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+            <a href="/Home" class="flex items-center gap-3">
+                <div class="w-[34px] h-[34px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
+                    <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-6 h-6 object-contain">
+                </div>
+                <div class="leading-tight">
+                    <div class="font-black text-lg text-neutral-100">Grace Threads</div>
+                    <div class="font-medium text-[9px] text-[#888888] tracking-wide">We Wear What We Believe</div>
+                </div>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="/Home" class="text-[11px] font-bold text-[#f05a1a]">Home</a>
+                <a href="/Catalog" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Shop</a>
+                <a href="/Contact" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Contact</a>
+                <a href="/" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Sign Out</a>
+            </nav>
+
+            <div class="flex items-center gap-5">
+                <button aria-label="Search" onclick="toggleSearch()">
+                    <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="#cccccc" stroke-width="2">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+                    </svg>
+                </button>
+                <button aria-label="Cart" onclick="toggleCart()">
+                    <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="#cccccc" stroke-width="2">
+                        <path d="M6 6h15l-1.5 9h-12z" stroke-linejoin="round" />
+                        <path d="M6 6L5 3H2" stroke-linecap="round" />
+                        <circle cx="9" cy="20" r="1" fill="#cccccc" />
+                        <circle cx="18" cy="20" r="1" fill="#cccccc" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search bar -->
+        <div id="search-bar" class="border-t border-white/10 bg-[#0c0c0c]">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex items-center gap-3">
+                <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0" fill="none" stroke="#888888" stroke-width="2">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+                </svg>
+                <input type="text" placeholder="Search products..."
+                       class="flex-1 bg-transparent text-sm text-white placeholder:text-[#888888] focus:outline-none">
+                <button aria-label="Close search" onclick="toggleSearch()">
+                    <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="#888888" stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    @if (!string.IsNullOrEmpty(Model.WelcomeMessage))
+    {
+        <div class="bg-green-500/10 border-b border-green-500/30 text-green-400 text-xs text-center px-4 py-3">
+            @Model.WelcomeMessage
+        </div>
+    }
+
+    <!-- Cart overlay + panel -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black/60 z-40" onclick="toggleCart()"></div>
+    <aside id="cart-panel" class="fixed top-0 right-0 h-full w-full max-w-[448px] bg-[#161616] z-50 flex flex-col border-l border-white/10">
+        <div class="flex justify-between items-center px-6 py-5 border-b border-white/10">
+            <div class="flex items-center gap-2">
+                <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="#f05a1a" stroke-width="2">
+                    <path d="M6 6h15l-1.5 9h-12z" stroke-linejoin="round" />
+                    <path d="M6 6L5 3H2" stroke-linecap="round" />
+                </svg>
+                <span class="font-black text-sm text-neutral-100">Your Cart</span>
+            </div>
+            <button aria-label="Close cart" onclick="toggleCart()">
+                <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="#888888" stroke-width="2">
+                    <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" />
+                </svg>
+            </button>
+        </div>
+        <div class="flex-1 flex flex-col items-center justify-center gap-4 px-6">
+            <svg viewBox="0 0 24 24" class="w-10 h-10" fill="none" stroke="#888888" stroke-width="1.5">
+                <path d="M6 6h15l-1.5 9h-12z" stroke-linejoin="round" />
+                <path d="M6 6L5 3H2" stroke-linecap="round" />
+                <circle cx="9" cy="20" r="1" fill="#888888" />
+                <circle cx="18" cy="20" r="1" fill="#888888" />
+            </svg>
+            <span class="font-black text-sm text-center text-[#888888]">Your cart is empty</span>
+        </div>
+    </aside>
+
+    <!-- Hero -->
+    <section class="relative overflow-hidden border-b border-white/10">
+        <img src="/images/WE_WEAR_WHAT_WE_BELIEVE.png" alt="" class="absolute inset-0 w-full h-full object-cover opacity-50">
+        <div class="absolute inset-0 bg-[#0c0c0c]/40"></div>
+        <div class="relative max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-6 py-20">
+            <div>
+                <span class="block text-[11px] font-bold text-[#f05a1a] mb-4">New Drop — 2025</span>
+                <h1 class="font-black text-5xl md:text-7xl leading-[0.95] text-neutral-100">SAVED<br>BY<br>GRACE.</h1>
+                <p class="text-sm text-white/90 mt-6">"For it is by grace you have been saved, through faith."</p>
+                <span class="block text-[11px] font-bold text-[#f05a1a] mt-2">— Ephesians 2:8</span>
+                <div class="flex flex-wrap gap-3 mt-8">
+                    <a href="/Catalog" class="flex items-center gap-2 bg-[#f05a1a] hover:bg-[#d94f14] transition px-8 py-4 text-[11px] font-black text-white">
+                        Shop Now →
+                    </a>
+                    <a href="/Catalog" class="flex items-center gap-2 border border-white/30 hover:border-white transition px-8 py-4 text-[11px] font-bold text-white">
+                        View All Tees
+                    </a>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <img src="/images/White_Front.png" alt="Saved By Grace Tee — White" class="w-full h-[320px] md:h-[429px] object-contain">
+                <img src="/images/Black_Back.png" alt="Saved By Grace Tee — Black" class="w-full h-[320px] md:h-[429px] object-contain mt-8">
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="bg-[#f05a1a] py-3 overflow-hidden">
+        <div class="marquee-track inline-block">
+            <span class="text-[11px] font-bold text-white tracking-wide">FAITH · STYLE · GRACE · WE WEAR WHAT WE BELIEVE · EPHESIANS 2:8 · SAVED BY GRACE &nbsp;·&nbsp; FAITH · STYLE · GRACE · WE WEAR WHAT WE BELIEVE · EPHESIANS 2:8 · SAVED BY GRACE &nbsp;·&nbsp; </span>
+        </div>
+    </div>
+
+    <!-- Product grid -->
+    <section id="products" class="px-6 py-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center">
+                <span class="text-[11px] font-bold text-[#f05a1a]">Available Now</span>
+                <h2 class="font-black text-4xl md:text-6xl text-neutral-100 mt-3">New Drop</h2>
+                <div class="w-12 h-1 bg-[#f05a1a] mx-auto mt-5"></div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 max-w-3xl mx-auto">
+                <div class="col-span-1">
+                    <div class="bg-[#1a1a1a] border border-white/10">
+                        <a href="/Product?color=black">
+                            <img src="/images/Black_Front.png" alt="Saved By Grace Tee — Black" class="w-full h-[240px] object-contain p-3">
+                        </a>
+                        <span class="inline-block bg-[#f05a1a] text-white text-[10px] font-bold px-2 py-1 ml-3 mb-2">New Drop</span>
+                        <button class="w-full bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[10px] font-bold py-3.5">Add to Cart</button>
+                    </div>
+                    <div class="mt-3">
+                        <span class="block text-[10px] text-[#888888]">Black — Ephesians 2:8</span>
+                        <a href="/Product?color=black"><span class="block font-black text-sm text-neutral-100 mt-1 hover:text-[#f05a1a] transition">Saved By Grace Tee</span></a>
+                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">$45</span>
+                    </div>
+                </div>
+                <div class="col-span-1">
+                    <div class="bg-[#1a1a1a] border border-white/10">
+                        <a href="/Product?color=white">
+                            <img src="/images/White_Front.png" alt="Saved By Grace Tee — White" class="w-full h-[240px] object-contain p-3">
+                        </a>
+                        <span class="inline-block bg-[#4ab4f0] text-white text-[10px] font-bold px-2 py-1 ml-3 mb-2">New Drop</span>
+                        <button class="w-full bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[10px] font-bold py-3.5">Add to Cart</button>
+                    </div>
+                    <div class="mt-3">
+                        <span class="block text-[10px] text-[#888888]">White — Ephesians 2:8</span>
+                        <a href="/Product?color=white"><span class="block font-black text-sm text-neutral-100 mt-1 hover:text-[#f05a1a] transition">Saved By Grace Tee</span></a>
+                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">$45</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center mt-12">
+                <a href="/Catalog" class="flex items-center gap-2 border border-white/30 hover:border-white transition px-8 py-3 text-[11px] font-bold text-[#888888] hover:text-white">
+                    View All Products →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Design showcase (orange / blue print artwork) -->
+    <section class="grid md:grid-cols-2">
+        <img src="/images/SAVED_ORANGE.png" alt="Saved By Grace design — orange" class="w-full h-[420px] object-cover bg-black">
+        <img src="/images/SAVED_BLUE.png" alt="Saved By Grace design — blue" class="w-full h-[420px] object-cover bg-white">
+    </section>
+
+    <!-- Premium details -->
+    <section class="bg-[#1a1a1a] px-6 py-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center">
+                <span class="text-[11px] font-bold text-[#f05a1a]">Premium Details</span>
+                <h2 class="font-black text-3xl md:text-4xl text-neutral-100 mt-3">Built Different.</h2>
+                <p class="text-sm text-[#888888] mt-4 max-w-md mx-auto">Every tag, label, and stitch is intentional.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 mt-12">
+                <div class="bg-[#161616] border border-white/10">
+                    <div class="h-[260px] bg-[#222222] flex items-center justify-center p-6">
+                        <img src="/images/INNER.png" alt="Custom Care Label" class="max-h-full max-w-full object-contain">
+                    </div>
+                    <div class="p-5 border-t border-white/10">
+                        <span class="block text-[10px] font-bold text-[#f05a1a]">Inner Tag</span>
+                        <span class="block font-black text-sm text-neutral-100 mt-1">Custom Care Label</span>
+                        <p class="text-xs text-[#888888] mt-2 leading-relaxed">100% Cotton · Do Not Iron On Print · Wash at 40°. Full brand identity on every garment.</p>
+                    </div>
+                </div>
+                <div class="bg-[#161616] border border-white/10">
+                    <div class="h-[260px] bg-black flex items-center justify-center p-10">
+                        <img src="/images/SLEEVES.png" alt="G+Cross Brand Mark" class="max-h-full max-w-full object-contain">
+                    </div>
+                    <div class="p-5 border-t border-white/10">
+                        <span class="block text-[10px] font-bold text-[#f05a1a]">Sleeve Tag</span>
+                        <span class="block font-black text-sm text-neutral-100 mt-1">G+Cross Brand Mark</span>
+                        <p class="text-xs text-[#888888] mt-2 leading-relaxed">The Grace Threads mark appears on the left sleeve — a subtle signature for those who know.</p>
+                    </div>
+                </div>
+                <div class="bg-[#161616] border border-white/10">
+                    <div class="h-[260px] bg-black flex items-center justify-center p-6">
+                        <img src="/images/HEM.png" alt="Branded Woven Label" class="max-h-full max-w-full object-contain">
+                    </div>
+                    <div class="p-5 border-t border-white/10">
+                        <span class="block text-[10px] font-bold text-[#f05a1a]">Hem Tag</span>
+                        <span class="block font-black text-sm text-neutral-100 mt-1">Branded Woven Label</span>
+                        <p class="text-xs text-[#888888] mt-2 leading-relaxed">"We Wear What We Believe" — stitched at the hem so the mission is always on you.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Front & Back -->
+    <section class="px-6 py-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center">
+                <span class="text-[11px] font-bold text-[#f05a1a]">Front & Back</span>
+                <h2 class="font-black text-3xl md:text-4xl text-neutral-100 mt-3">The Full Picture.</h2>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mt-12">
+                <div>
+                    <img src="/images/Black_Front.png" alt="Black tee — front" class="w-full h-[280px] object-contain bg-[#1a1a1a]">
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="w-2 h-2 rounded-full bg-[#f05a1a]"></span>
+                        <span class="text-[11px] text-[#888888]">Black — Front</span>
+                    </div>
+                </div>
+                <div>
+                    <img src="/images/Black_Back.png" alt="Black tee — back" class="w-full h-[280px] object-contain bg-[#1a1a1a]">
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="w-2 h-2 rounded-full bg-[#f05a1a]"></span>
+                        <span class="text-[11px] text-[#888888]">Black — Back</span>
+                    </div>
+                </div>
+                <div>
+                    <img src="/images/White_Front.png" alt="White tee — front" class="w-full h-[280px] object-contain bg-[#1a1a1a]">
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="w-2 h-2 rounded-full bg-[#4ab4f0]"></span>
+                        <span class="text-[11px] text-[#888888]">White — Front</span>
+                    </div>
+                </div>
+                <div>
+                    <img src="/images/White_Back.png" alt="White tee — back" class="w-full h-[280px] object-contain bg-[#1a1a1a]">
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="w-2 h-2 rounded-full bg-[#4ab4f0]"></span>
+                        <span class="text-[11px] text-[#888888]">White — Back</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center mt-10">
+                <a href="#products" class="flex items-center gap-2 bg-[#f05a1a] hover:bg-[#d94f14] transition px-10 py-4 text-[11px] font-black text-white">
+                    Shop Now — $45 →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Message banner -->
+    <section class="flex items-center gap-10 bg-[#0c0c0c] border-t border-white/10 px-6 md:px-16 py-16">
+        <div class="max-w-xs">
+            <span class="block text-[11px] font-bold text-[#f05a1a]">The Message</span>
+            <h3 class="font-black text-2xl text-neutral-100 mt-3 leading-snug">More than a tee.<br>A declaration.</h3>
+        </div>
+        <img src="/images/SAVED_BLUE2.png" alt="Saved By Grace design" class="hidden md:block w-[220px] h-[280px] object-contain opacity-90 ml-auto">
+    </section>
+
+    <!-- Stats -->
+    <section class="bg-[#161616] border-t border-b border-white/10 px-6 py-10">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+            <div>
+                <span class="block font-black text-3xl text-[#f05a1a]">100%</span>
+                <span class="block text-[11px] text-[#888888] mt-1">Faith-Inspired Design</span>
+            </div>
+            <div>
+                <span class="block font-black text-3xl text-[#f05a1a]">4K</span>
+                <span class="block text-[11px] text-[#888888] mt-1">Premium Screen-Print Quality</span>
+            </div>
+            <div>
+                <span class="block font-black text-3xl text-[#f05a1a]">Eph. 2:8</span>
+                <span class="block text-[11px] text-[#888888] mt-1">Every Piece Carries the Word</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="bg-[#1a1a1a] px-6 py-20">
+        <div class="max-w-[512px] mx-auto flex flex-col items-center text-center">
+            <span class="text-[11px] font-bold text-[#f05a1a] tracking-wide">Join The Movement</span>
+            <h2 class="font-black text-3xl text-neutral-100 mt-3">Early Access to Every Drop</h2>
+            <p class="text-sm text-[#888888] mt-4">Be first for new releases, restocks, and exclusive Grace Threads content.</p>
+            <div class="flex w-full max-w-sm mt-8">
+                <input type="email" placeholder="your@email.com" class="flex-1 h-12 bg-[#222222] border border-white/10 px-4 text-sm text-white placeholder:text-[#666666]">
+                <button class="bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[11px] font-black px-7">Subscribe</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#161616] border-t border-white/10 px-6 pt-14 pb-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-[30px] h-[30px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
+                            <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-5 h-5 object-contain">
+                        </div>
+                        <span class="font-black text-base text-neutral-100">Grace Threads</span>
+                    </div>
+                    <p class="text-[12px] text-[#888888] leading-[19.5px] mt-5">Faith. Style. Grace.<br>We wear what we believe.</p>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Shop</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-medium text-[#888888]">
+                        <li><a href="/Catalog" class="hover:text-white transition">All Products</a></li>
+                        <li><a href="/Catalog" class="hover:text-white transition">Saved By Grace Tee</a></li>
+                        <li><a href="/Catalog" class="hover:text-white transition">Hoodies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Help</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-medium text-[#888888]">
+                        <li><a href="/Contact" class="hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Size Guide</a></li>
+                        <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Connect</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-normal text-[#888888]">
+                        <li><a href="#" class="hover:text-white transition">Instagram</a></li>
+                        <li><a href="#" class="hover:text-white transition">Facebook</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 mt-12 border-t border-white/10">
+                <span class="text-xs text-[#888888]">© 2025 Grace Threads. All rights reserved.</span>
+                <span class="text-[10px] font-bold text-[#f05a1a]">Ephesians 2:8</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleCart() {
+        document.getElementById('cart-panel').classList.toggle('open');
+        document.getElementById('cart-overlay').classList.toggle('open');
+        }
+        function toggleSearch() {
+        document.getElementById('search-bar').classList.toggle('open');
+        }
+    </script>
+
+</body>
+</html>

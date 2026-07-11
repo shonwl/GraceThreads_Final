@@ -1,0 +1,59 @@
+﻿@using GraceThreads.Models
+@model List<CartItem>
+
+<div id="cart-overlay" class="fixed inset-0 bg-black/60 z-40" onclick="toggleCart()"></div>
+<aside id="cart-panel" class="fixed top-0 right-0 h-full w-full max-w-[448px] bg-[#161616] z-50 flex flex-col border-l border-white/10">
+    <div class="flex justify-between items-center px-6 py-5 border-b border-white/10">
+        <div class="flex items-center gap-2">
+            <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="#f05a1a" stroke-width="2">
+                <path d="M6 6h15l-1.5 9h-12z" stroke-linejoin="round" />
+                <path d="M6 6L5 3H2" stroke-linecap="round" />
+            </svg>
+            <span class="font-black text-sm text-neutral-100">Your Cart</span>
+        </div>
+        <button aria-label="Close cart" onclick="toggleCart()">
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="#888888" stroke-width="2">
+                <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" />
+            </svg>
+        </button>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="flex-1 flex flex-col items-center justify-center gap-4 px-6">
+            <svg viewBox="0 0 24 24" class="w-10 h-10" fill="none" stroke="#888888" stroke-width="1.5">
+                <path d="M6 6h15l-1.5 9h-12z" stroke-linejoin="round" />
+                <path d="M6 6L5 3H2" stroke-linecap="round" />
+                <circle cx="9" cy="20" r="1" fill="#888888" />
+                <circle cx="18" cy="20" r="1" fill="#888888" />
+            </svg>
+            <span class="font-black text-sm text-center text-[#888888]">Your cart is empty</span>
+        </div>
+    }
+    else
+    {
+        <div class="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-4">
+            @foreach (var item in Model)
+            {
+                <div class="flex gap-3 border-b border-white/10 pb-4">
+                    <div class="w-16 h-16 shrink-0" style="background-color:@item.ColorHex; opacity:0.85;"></div>
+                    <div class="flex-1">
+                        <span class="block font-bold text-sm text-neutral-100">@item.ProductName</span>
+                        <span class="block text-[10px] text-[#888888] mt-0.5">@item.Variant</span>
+                        <span class="block text-xs text-[#888888] mt-1">Qty: @item.Quantity</span>
+                    </div>
+                    <span class="font-bold text-sm text-[#f05a1a]">$@((item.Price * item.Quantity).ToString("0.00"))</span>
+                </div>
+            }
+        </div>
+        <div class="px-6 py-5 border-t border-white/10">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-xs text-[#888888]">Subtotal</span>
+                <span class="font-black text-lg text-neutral-100">$@(Model.Sum(i => i.Price * i.Quantity).ToString("0.00"))</span>
+            </div>
+            <a href="/Cart" class="block text-center bg-[#f05a1a] hover:bg-[#d94f14] transition text-white font-black text-[11px] py-4">
+                View Cart & Checkout
+            </a>
+        </div>
+    }
+</aside>

@@ -1,0 +1,362 @@
+﻿@page
+@model GraceThreads.Pages.CatalogModel
+@using GraceThreads.Models
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grace Threads — Shop All</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+        font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        }
+
+        body {
+        background: #0c0c0c;
+        }
+
+        .placeholder-img {
+        background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 12px);
+        }
+
+        #cart-panel {
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        }
+
+        #cart-panel.open {
+        transform: translateX(0);
+        }
+
+        #cart-overlay, #search-overlay {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        }
+
+        #cart-overlay.open, #search-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+        }
+
+        #search-bar {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.25s ease;
+        }
+
+        #search-bar.open {
+        max-height: 80px;
+        }
+
+        .filter-tab.active {
+        background: #f05a1a;
+        color: #fff;
+        }
+    </style>
+</head>
+<body class="bg-[#0c0c0c] text-white">
+
+    <!-- Promo bar -->
+    <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+    </div>
+
+    <!-- Nav -->
+    <header class="border-b border-white/10 relative">
+        <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+            <a href="/Home" class="flex items-center gap-3">
+                <div class="w-[34px] h-[34px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
+                    <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-6 h-6 object-contain">
+                </div>
+                <div class="leading-tight">
+                    <div class="font-black text-lg text-neutral-100">Grace Threads</div>
+                    <div class="font-medium text-[9px] text-[#888888] tracking-wide">We Wear What We Believe</div>
+                </div>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="/Home" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Home</a>
+                <a href="/Catalog" class="text-[11px] font-bold text-[#f05a1a]">Shop</a>
+                <a href="/Contact" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Contact</a>
+                <a href="/" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Sign Out</a>
+            </nav>
+
+            <div class="flex items-center gap-5">
+                <button aria-label="Search" onclick="toggleSearch()">
+                    <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="#cccccc" stroke-width="2">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+                    </svg>
+                </button>
+                <button aria-label="Cart" onclick="toggleCart()">
+                    <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="#cccccc" stroke-width="2">
+                        <path d="M6 6h15l-1.5 9h-12z" stroke-linejoin="round" />
+                        <path d="M6 6L5 3H2" stroke-linecap="round" />
+                        <circle cx="9" cy="20" r="1" fill="#cccccc" />
+                        <circle cx="18" cy="20" r="1" fill="#cccccc" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search bar -->
+        <div id="search-bar" class="border-t border-white/10 bg-[#0c0c0c]">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex items-center gap-3">
+                <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0" fill="none" stroke="#888888" stroke-width="2">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+                </svg>
+                <input type="text" placeholder="Search products..."
+                       class="flex-1 bg-transparent text-sm text-white placeholder:text-[#888888] focus:outline-none">
+                <button aria-label="Close search" onclick="toggleSearch()">
+                    <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="#888888" stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart overlay + panel (shared partial, driven by session cart) -->
+    <partial name="_CartPanel" model="Model.CartItems" />
+
+    <!-- Page banner -->
+    <section class="relative border-b border-white/10 overflow-hidden">
+        <img src="/images/Black_Banner.png" alt="Saved By Grace — Black Tee" class="absolute inset-0 w-full h-full object-cover opacity-40">
+        <div class="absolute inset-0 bg-[#0c0c0c]/50"></div>
+        <div class="relative h-[220px] flex items-center px-6">
+            <div class="max-w-7xl mx-auto w-full">
+                <span class="block text-[10px] font-bold text-[#f05a1a] mb-2">Catalog</span>
+                <h1 class="font-black text-4xl md:text-6xl text-neutral-100">Shop All</h1>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters + product grid -->
+    <section class="px-6 py-16">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-wrap items-center gap-3">
+                <button class="filter-tab active text-[10px] font-bold px-4 py-2 border border-white/10">New Drop</button>
+                <button class="filter-tab text-[10px] font-bold px-4 py-2 border border-white/10 text-[#888888]">Tees</button>
+                <button class="filter-tab text-[10px] font-bold px-4 py-2 border border-white/10 text-[#888888]">Hoodies</button>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
+                <!-- Black Tee -->
+                <div>
+                    <div class="bg-[#1a1a1a] border border-white/10">
+                        <a href="/Product?color=black">
+                            <img src="/images/Black_Front.png" alt="Saved By Grace Tee — Black" class="w-full h-[240px] object-contain p-3">
+                        </a>
+                        <a href="/Product?color=black"><span class="block font-black text-sm text-neutral-100 mt-1 hover:text-[#f05a1a] transition">Saved By Grace Tee</span></a>
+                        <form method="post" asp-page-handler="AddToCart">
+                            <input type="hidden" name="productName" value="Saved By Grace Tee" />
+                            <input type="hidden" name="variant" value="Black — Ephesians 2:8" />
+                            <input type="hidden" name="price" value="45" />
+                            <input type="hidden" name="colorHex" value="#f05a1a" />
+                            <button type="submit" class="w-full bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[10px] font-bold py-3.5">Add to Cart</button>
+                        </form>
+                    </div>
+                    <div class="mt-3">
+                        <span class="block text-[10px] text-[#888888]">Black — Ephesians 2:8</span>
+                        <span class="block font-black text-sm text-neutral-100 mt-1">Saved By Grace Tee</span>
+                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">$45</span>
+                    </div>
+                </div>
+
+                <!-- White Tee -->
+                <div>
+                    <div class="bg-[#1a1a1a] border border-white/10">
+                        <a href="/Product?color=black">
+                            <img src="/images/White_Front.png" alt="Saved By Grace Tee — Black" class="w-full h-[240px] object-contain p-3">
+                        </a>
+                        <a href="/Product?color=black"><span class="block font-black text-sm text-neutral-100 mt-1 hover:text-[#f05a1a] transition">Saved By Grace Tee</span></a>
+                        <form method="post" asp-page-handler="AddToCart">
+                            <input type="hidden" name="productName" value="Saved By Grace Tee" />
+                            <input type="hidden" name="variant" value="White — Ephesians 2:8" />
+                            <input type="hidden" name="price" value="45" />
+                            <input type="hidden" name="colorHex" value="#4ab4f0" />
+                            <button type="submit" class="w-full bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[10px] font-bold py-3.5">Add to Cart</button>
+                        </form>
+                    </div>
+                    <div class="mt-3">
+                        <span class="block text-[10px] text-[#888888]">White — Ephesians 2:8</span>
+                        <span class="block font-black text-sm text-neutral-100 mt-1">Saved By Grace Tee</span>
+                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">$45</span>
+                    </div>
+                </div>
+
+                <!-- Black Hoodie — Coming Soon -->
+                <div>
+                    <div class="bg-[#1a1a1a] border border-white/10">
+                        <div class="h-[240px] flex flex-col items-center justify-center gap-2 m-3 border border-dashed border-white/10">
+                            <svg viewBox="0 0 24 24" class="w-8 h-8" fill="none" stroke="#555555" stroke-width="1.5">
+                                <path d="M8 4h8l2 4h-3v12H7V8H4l2-4z" stroke-linejoin="round" />
+                            </svg>
+                            <span class="text-[10px] font-bold text-[#555555] tracking-wide">Coming Soon</span>
+                        </div>
+                        <span class="inline-block bg-[#1a1a1a] text-[#888888] text-[10px] font-bold px-2 py-1 ml-3 mb-2 border border-white/10">Restocked</span>
+                        <button type="button" disabled class="w-full bg-[#333333] cursor-not-allowed text-[#888888] text-[10px] font-bold py-3.5">Notify Me</button>
+                    </div>
+                    <div class="mt-3">
+                        <span class="block text-[10px] text-[#888888]">Black — Ephesians 2:8</span>
+                        <span class="block font-black text-sm text-neutral-100 mt-1">Grace Hoodie</span>
+                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">$65</span>
+                    </div>
+                </div>
+
+                <!-- Grey Hoodie — Coming Soon -->
+                <div>
+                    <div class="bg-[#1a1a1a] border border-white/10">
+                        <div class="h-[240px] flex flex-col items-center justify-center gap-2 m-3 border border-dashed border-white/10">
+                            <svg viewBox="0 0 24 24" class="w-8 h-8" fill="none" stroke="#555555" stroke-width="1.5">
+                                <path d="M8 4h8l2 4h-3v12H7V8H4l2-4z" stroke-linejoin="round" />
+                            </svg>
+                            <span class="text-[10px] font-bold text-[#555555] tracking-wide">Coming Soon</span>
+                        </div>
+                        <span class="inline-block bg-[#1a1a1a] text-[#888888] text-[10px] font-bold px-2 py-1 ml-3 mb-2 border border-white/10">Restocked</span>
+                        <button type="button" disabled class="w-full bg-[#333333] cursor-not-allowed text-[#888888] text-[10px] font-bold py-3.5">Notify Me</button>
+                    </div>
+                    <div class="mt-3">
+                        <span class="block text-[10px] text-[#888888]">Grey — Ephesians 2:8</span>
+                        <span class="block font-black text-sm text-neutral-100 mt-1">Grace Hoodie</span>
+                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">$65</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured design split banner (White front left, Black back right) -->
+            <div class="relative w-full h-[280px] md:h-[420px] mt-12 overflow-hidden bg-[#1a1a1a]">
+                <img src="/images/White_Banner.png" alt="Saved By Grace — White Tee Front"
+                     class="absolute inset-0 w-full h-full object-cover"
+                     style="clip-path: polygon(0 0, 55% 0, 45% 100%, 0 100%); object-position: center 65%;">
+                <img src="/images/Black_Banner.png" alt="Saved By Grace — Black Tee Back"
+                     class="absolute inset-0 w-full h-full object-cover"
+                     style="clip-path: polygon(55% 0, 100% 0, 100% 100%, 45% 100%); object-position: center 65%;">
+                <div class="absolute inset-y-0 left-1/2 w-px bg-white/20 -translate-x-1/2"></div>
+                <span class="absolute bottom-4 left-6 text-[11px] font-black text-white tracking-wide">FRONT</span>
+                <span class="absolute bottom-4 right-6 text-[11px] font-black text-white tracking-wide">BACK</span>
+            </div>
+
+            <!-- Size guide -->
+            <div class="mt-16">
+                <h3 class="text-[11px] font-bold text-[#f05a1a] mb-4 tracking-wide">Size Guide</h3>
+                <div class="overflow-x-auto border border-white/10">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="bg-[#161616] text-[#888888]">
+                                <th class="px-4 py-3 font-bold">Size</th>
+                                <th class="px-4 py-3 font-bold">Chest (in)</th>
+                                <th class="px-4 py-3 font-bold">Length (in)</th>
+                                <th class="px-4 py-3 font-bold">Sleeve (in)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-[#cccccc]">
+                            <tr class="border-t border-white/10">
+                                <td class="px-4 py-3 font-bold text-[#f05a1a]">S</td>
+                                <td class="px-4 py-3">36–38</td>
+                                <td class="px-4 py-3">27</td>
+                                <td class="px-4 py-3">8</td>
+                            </tr>
+                            <tr class="border-t border-white/10">
+                                <td class="px-4 py-3 font-bold text-[#f05a1a]">M</td>
+                                <td class="px-4 py-3">39–41</td>
+                                <td class="px-4 py-3">28</td>
+                                <td class="px-4 py-3">8.5</td>
+                            </tr>
+                            <tr class="border-t border-white/10">
+                                <td class="px-4 py-3 font-bold text-[#f05a1a]">L</td>
+                                <td class="px-4 py-3">42–44</td>
+                                <td class="px-4 py-3">29</td>
+                                <td class="px-4 py-3">9</td>
+                            </tr>
+                            <tr class="border-t border-white/10">
+                                <td class="px-4 py-3 font-bold text-[#f05a1a]">XL</td>
+                                <td class="px-4 py-3">45–47</td>
+                                <td class="px-4 py-3">30</td>
+                                <td class="px-4 py-3">9.5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="bg-[#1a1a1a] px-6 py-20">
+        <div class="max-w-[512px] mx-auto flex flex-col items-center text-center">
+            <span class="text-[11px] font-bold text-[#f05a1a] tracking-wide">Join The Movement</span>
+            <h2 class="font-black text-3xl text-neutral-100 mt-3">Early Access to Every Drop</h2>
+            <p class="text-sm text-[#888888] mt-4">Be first for new releases, restocks, and exclusive Grace Threads content.</p>
+            <div class="flex w-full max-w-sm mt-8">
+                <input type="email" placeholder="your@email.com" class="flex-1 h-12 bg-[#222222] border border-white/10 px-4 text-sm text-white placeholder:text-[#666666]">
+                <button class="bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[11px] font-black px-7">Subscribe</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#161616] border-t border-white/10 px-6 pt-14 pb-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-[30px] h-[30px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
+                            <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-5 h-5 object-contain">
+                        </div>
+                        <span class="font-black text-base text-neutral-100">Grace Threads</span>
+                    </div>
+                    <p class="text-[12px] text-[#888888] leading-[19.5px] mt-5">Faith. Style. Grace.<br>We wear what we believe.</p>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Shop</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-medium text-[#888888]">
+                        <li><a href="/Catalog" class="hover:text-white transition">All Products</a></li>
+                        <li><a href="/Catalog" class="hover:text-white transition">Saved By Grace Tee</a></li>
+                        <li><a href="/Catalog" class="hover:text-white transition">Hoodies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Help</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-medium text-[#888888]">
+                        <li><a href="/Contact" class="hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Size Guide</a></li>
+                        <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-[11px] font-bold text-neutral-100">Connect</h3>
+                    <ul class="flex flex-col gap-2.5 mt-4 text-xs font-normal text-[#888888]">
+                        <li><a href="#" class="hover:text-white transition">Instagram</a></li>
+                        <li><a href="#" class="hover:text-white transition">Facebook</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 mt-12 border-t border-white/10">
+                <span class="text-xs text-[#888888]">© 2025 Grace Threads. All rights reserved.</span>
+                <span class="text-[10px] font-bold text-[#f05a1a]">Ephesians 2:8</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleCart() {
+        document.getElementById('cart-panel').classList.toggle('open');
+        document.getElementById('cart-overlay').classList.toggle('open');
+        }
+        function toggleSearch() {
+        document.getElementById('search-bar').classList.toggle('open');
+        }
+    </script>
+
+</body>
+</html>
