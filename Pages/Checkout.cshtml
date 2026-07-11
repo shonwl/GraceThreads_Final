@@ -1,0 +1,155 @@
+﻿@page
+@model GraceThreads.Pages.CheckoutModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grace Threads — Checkout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+        font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        }
+
+        body {
+        background: #0c0c0c;
+        }
+
+        input::placeholder {
+        color: #666;
+        }
+
+        input:focus {
+        outline: none;
+        border-color: #f05a1a;
+        }
+    </style>
+</head>
+<body class="bg-[#0c0c0c] text-white">
+
+    <!-- Promo bar -->
+    <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+    </div>
+
+    <!-- Nav -->
+    <header class="border-b border-white/10">
+        <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+            <a href="/Home" class="flex items-center gap-3">
+                <div class="w-[34px] h-[34px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
+                    <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-6 h-6 object-contain">
+                </div>
+                <div class="leading-tight">
+                    <div class="font-black text-lg text-neutral-100">Grace Threads</div>
+                    <div class="font-medium text-[9px] text-[#888888] tracking-wide">We Wear What We Believe</div>
+                </div>
+            </a>
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="/Home" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Home</a>
+                <a href="/Catalog" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Shop</a>
+                <a href="/Contact" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Checkout -->
+    <section class="px-6 py-16">
+        <div class="max-w-5xl mx-auto">
+            <a href="/Cart" class="text-[11px] font-bold text-[#888888] hover:text-white transition">← Back to Cart</a>
+            <h1 class="font-black text-5xl text-neutral-100 mt-4">Checkout</h1>
+
+            <div class="grid md:grid-cols-2 gap-12 mt-10">
+                <!-- Shipping form -->
+                <form method="post" asp-page="/OrderConfirmation" class="flex flex-col gap-4">
+                    <span class="text-[11px] font-bold text-[#f05a1a] tracking-wide">Shipping Details</span>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#888888] mb-1.5">Full Name</label>
+                        <input type="text" name="fullName" required placeholder="John Grace"
+                               class="w-full h-[46px] bg-[#222222] border border-white/10 px-4 text-sm text-white placeholder:text-[#666666]">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#888888] mb-1.5">Email</label>
+                        <input type="email" name="email" required placeholder="you@example.com"
+                               class="w-full h-[46px] bg-[#222222] border border-white/10 px-4 text-sm text-white placeholder:text-[#666666]">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#888888] mb-1.5">Shipping Address</label>
+                        <input type="text" name="address" required placeholder="123 Grace Street"
+                               class="w-full h-[46px] bg-[#222222] border border-white/10 px-4 text-sm text-white placeholder:text-[#666666]">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-[#888888] mb-1.5">City</label>
+                            <input type="text" name="city" required placeholder="Manila"
+                                   class="w-full h-[46px] bg-[#222222] border border-white/10 px-4 text-sm text-white placeholder:text-[#666666]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-[#888888] mb-1.5">Postal Code</label>
+                            <input type="text" name="postalCode" required placeholder="1000"
+                                   class="w-full h-[46px] bg-[#222222] border border-white/10 px-4 text-sm text-white placeholder:text-[#666666]">
+                        </div>
+                    </div>
+
+                    <span class="text-[11px] font-bold text-[#f05a1a] tracking-wide mt-4">Payment</span>
+                    <div class="border border-white/10 bg-[#161616] p-4 text-xs text-[#888888]">
+                        This is a demo store — no real payment is processed. Placing your order below will confirm it instantly.
+                    </div>
+
+                    <button type="submit"
+                            class="bg-[#f05a1a] hover:bg-[#d94f14] transition text-white font-black text-sm py-4 mt-4">
+                        Place Order — $@Model.Total.ToString("0.00")
+                    </button>
+                </form>
+
+                <!-- Order summary -->
+                <div>
+                    <span class="text-[11px] font-bold text-[#f05a1a] tracking-wide">Order Summary</span>
+                    <div class="flex flex-col gap-4 mt-4 border border-white/10 bg-[#161616] p-5">
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <div class="flex items-center gap-4 border-b border-white/10 pb-4">
+                                <div class="w-16 h-16 shrink-0 bg-[#1a1a1a] flex items-center justify-center overflow-hidden">
+                                    <img src="@item.ImageUrl" alt="@item.ProductName" class="w-full h-full object-contain p-1">
+                                </div>
+                                <div class="flex-1">
+                                    <span class="block text-sm font-bold text-neutral-100">@item.ProductName</span>
+                                    <span class="block text-[10px] text-[#888888] mt-0.5">@item.Variant</span>
+                                    <span class="block text-[10px] text-[#888888] mt-0.5">Qty: @item.Quantity</span>
+                                </div>
+                                <span class="text-sm font-bold text-[#f05a1a]">$@((item.Price * item.Quantity).ToString("0.00"))</span>
+                            </div>
+                        }
+
+                        <div class="flex justify-between text-xs text-[#888888]">
+                            <span>Subtotal</span>
+                            <span class="text-neutral-100">$@Model.Subtotal.ToString("0.00")</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-[#888888]">
+                            <span>Shipping</span>
+                            <span class="text-neutral-100">@(Model.Shipping == 0 ? "Free" : "$" + Model.Shipping.ToString("0.00"))</span>
+                        </div>
+                        <div class="flex justify-between text-base font-black border-t border-white/10 pt-3">
+                            <span class="text-neutral-100">Total</span>
+                            <span class="text-[#f05a1a]">$@Model.Total.ToString("0.00")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#161616] border-t border-white/10 px-6 py-8 text-center">
+        <span class="text-xs text-[#888888]">© 2025 Grace Threads. All rights reserved.</span>
+        <span class="block text-[10px] font-bold text-[#f05a1a] mt-1">Ephesians 2:8</span>
+    </footer>
+
+</body>
+</html>

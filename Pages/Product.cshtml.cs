@@ -10,7 +10,7 @@ namespace GraceThreads.Pages
         public string ProductName { get; } = "Saved By Grace Tee";
         public string Color { get; set; } = "black";
         public string ColorLabel { get; set; } = "Black";
-        public string ColorHex { get; set; } = "#f05a1a";
+        public string ColorHex { get; set; } = "#1a1a1a";
         public string ImageFront { get; set; } = "/images/Black_Front.png";
         public List<string> Thumbnails { get; set; } = new();
         public decimal Price { get; } = 45m;
@@ -45,7 +45,8 @@ namespace GraceThreads.Pages
                 Variant = $"{ColorLabel} — Ephesians 2:8 · Size {size}",
                 Price = Price,
                 Quantity = quantity,
-                ColorHex = ColorHex
+                ColorHex = ColorHex,
+                ImageUrl = ImageFront
             });
         }
 
@@ -55,7 +56,7 @@ namespace GraceThreads.Pages
             if (Color == "white")
             {
                 ColorLabel = "White";
-                ColorHex = "#4ab4f0";
+                ColorHex = "#f5f5f5";
                 ImageFront = "/images/White_Front.png";
                 Thumbnails = new List<string>
                 {
@@ -69,7 +70,7 @@ namespace GraceThreads.Pages
             else
             {
                 ColorLabel = "Black";
-                ColorHex = "#f05a1a";
+                ColorHex = "#1a1a1a";
                 ImageFront = "/images/Black_Front.png";
                 Thumbnails = new List<string>
                 {

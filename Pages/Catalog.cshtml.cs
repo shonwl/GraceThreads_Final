@@ -14,7 +14,7 @@ namespace GraceThreads.Pages
             CartItems = CartService.GetCart(HttpContext.Session);
         }
 
-        public IActionResult OnPostAddToCart(string productName, string variant, decimal price, string colorHex)
+        public IActionResult OnPostAddToCart(string productName, string variant, decimal price, string colorHex, string imageUrl)
         {
             CartService.AddItem(HttpContext.Session, new CartItem
             {
@@ -22,7 +22,8 @@ namespace GraceThreads.Pages
                 Variant = variant,
                 Price = price,
                 Quantity = 1,
-                ColorHex = colorHex
+                ColorHex = colorHex,
+                ImageUrl = imageUrl
             });
             return RedirectToPage();
         }

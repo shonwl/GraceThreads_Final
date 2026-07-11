@@ -1,5 +1,6 @@
 ﻿@page
 @model GraceThreads.Pages.HomeModel
+@using GraceThreads.Models
 @{
     Layout = null;
 }
@@ -142,32 +143,7 @@
     }
 
     <!-- Cart overlay + panel -->
-    <div id="cart-overlay" class="fixed inset-0 bg-black/60 z-40" onclick="toggleCart()"></div>
-    <aside id="cart-panel" class="fixed top-0 right-0 h-full w-full max-w-[448px] bg-[#161616] z-50 flex flex-col border-l border-white/10">
-        <div class="flex justify-between items-center px-6 py-5 border-b border-white/10">
-            <div class="flex items-center gap-2">
-                <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="#f05a1a" stroke-width="2">
-                    <path d="M6 6h15l-1.5 9h-12z" stroke-linejoin="round" />
-                    <path d="M6 6L5 3H2" stroke-linecap="round" />
-                </svg>
-                <span class="font-black text-sm text-neutral-100">Your Cart</span>
-            </div>
-            <button aria-label="Close cart" onclick="toggleCart()">
-                <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="#888888" stroke-width="2">
-                    <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" />
-                </svg>
-            </button>
-        </div>
-        <div class="flex-1 flex flex-col items-center justify-center gap-4 px-6">
-            <svg viewBox="0 0 24 24" class="w-10 h-10" fill="none" stroke="#888888" stroke-width="1.5">
-                <path d="M6 6h15l-1.5 9h-12z" stroke-linejoin="round" />
-                <path d="M6 6L5 3H2" stroke-linecap="round" />
-                <circle cx="9" cy="20" r="1" fill="#888888" />
-                <circle cx="18" cy="20" r="1" fill="#888888" />
-            </svg>
-            <span class="font-black text-sm text-center text-[#888888]">Your cart is empty</span>
-        </div>
-    </aside>
+    <partial name="_CartPanel" model="Model.CartItems" />
 
     <!-- Hero -->
     <section class="relative overflow-hidden border-b border-white/10">
@@ -212,31 +188,48 @@
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 max-w-3xl mx-auto">
+                <!-- Black Tee -->
                 <div class="col-span-1">
                     <div class="bg-[#1a1a1a] border border-white/10">
                         <a href="/Product?color=black">
                             <img src="/images/Black_Front.png" alt="Saved By Grace Tee — Black" class="w-full h-[240px] object-contain p-3">
                         </a>
                         <span class="inline-block bg-[#f05a1a] text-white text-[10px] font-bold px-2 py-1 ml-3 mb-2">New Drop</span>
-                        <button class="w-full bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[10px] font-bold py-3.5">Add to Cart</button>
+                        <form method="post" asp-page-handler="AddToCart">
+                            <input type="hidden" name="productName" value="Saved By Grace Tee" />
+                            <input type="hidden" name="variant" value="Black — Ephesians 2:8" />
+                            <input type="hidden" name="price" value="45" />
+                            <input type="hidden" name="colorHex" value="#1a1a1a" />
+                            <input type="hidden" name="imageUrl" value="/images/Black_Front.png" />
+                            <button type="submit" class="w-full bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[10px] font-bold py-3.5">Add to Cart</button>
+                        </form>
                     </div>
                     <div class="mt-3">
                         <span class="block text-[10px] text-[#888888]">Black — Ephesians 2:8</span>
-                        <a href="/Product?color=black"><span class="block font-black text-sm text-neutral-100 mt-1 hover:text-[#f05a1a] transition">Saved By Grace Tee</span></a>
+                        <span class="block font-black text-sm text-neutral-100 mt-1">Saved By Grace Tee</span>
                         <span class="block font-bold text-sm text-[#f05a1a] mt-1">$45</span>
                     </div>
                 </div>
+
+                <!-- White Tee -->
                 <div class="col-span-1">
                     <div class="bg-[#1a1a1a] border border-white/10">
                         <a href="/Product?color=white">
                             <img src="/images/White_Front.png" alt="Saved By Grace Tee — White" class="w-full h-[240px] object-contain p-3">
                         </a>
                         <span class="inline-block bg-[#4ab4f0] text-white text-[10px] font-bold px-2 py-1 ml-3 mb-2">New Drop</span>
-                        <button class="w-full bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[10px] font-bold py-3.5">Add to Cart</button>
+                        <form method="post" asp-page-handler="AddToCart">
+                            <input type="hidden" name="productName" value="Saved By Grace Tee" />
+                            <input type="hidden" name="variant" value="White — Ephesians 2:8" />
+                            <input type="hidden" name="price" value="45" />
+                            <input type="hidden" name="colorHex" value="#f5f5f5" />
+                            <input type="hidden" name="imageUrl" value="/images/White_Front.png" />
+                            <button type="submit" class="w-full bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[10px] font-bold py-3.5">Add to Cart</button>
+                        </form>
                     </div>
                     <div class="mt-3">
                         <span class="block text-[10px] text-[#888888]">White — Ephesians 2:8</span>
-                        <a href="/Product?color=white"><span class="block font-black text-sm text-neutral-100 mt-1 hover:text-[#f05a1a] transition">Saved By Grace Tee</span></a>
+                        <span class="block font-black text-sm text-neutral-100 mt-1">Saved By Grace Tee</span>
                         <span class="block font-bold text-sm text-[#f05a1a] mt-1">$45</span>
                     </div>
                 </div>
