@@ -30,9 +30,18 @@ namespace GraceThreads.Pages
         public string? SuccessMessage { get; set; }
         public string? ErrorMessage { get; set; }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            SuccessMessage = TempData["SuccessMessage"] as string;
+            // If a user types your base website URL (e.g., cold visit to "https://localhost:7123/"),
+            // immediately send them gracefully over to the shop storefront storefront page.
+            if (Request.Path == "/")
+            {
+                return RedirectToPage("/Home");
+            }
+
+            // Otherwise, if they explicitly went to "/Index" or were forced here to log in,
+            // let the page render normally.
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()

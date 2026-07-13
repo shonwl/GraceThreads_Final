@@ -27,5 +27,45 @@ namespace GraceThreads.Pages
             });
             return RedirectToPage();
         }
+        public IActionResult OnPostUpdateQuantity(string productName, string variant, int amount)
+        {
+            // 1. Pull the current items out of the session
+            var cart = CartService.GetCart(HttpContext.Session);
+            
+            // 2. Locate the specific item matching the name and variant
+            var item = cart.FirstOrDefault(i => i.ProductName == productName && i.Variant == variant);
+            
+            if (item != null)
+            {
+                // 3. Adjust quantity
+                item.Quantity += amount;
+                
+                // 4. If quantity hits 0 or lower, drop it from the cart completely
+                if (item.Quantity <= 0)
+                {
+                    cart.Remove(item);
+                }
+                
+                // 5. Serialize and save the updated list back to the Session string
+                HttpContext.Session.SetString("Cart", System.Text.Json.JsonSerializer.Serialize(cart));
+            }
+
+            return RedirectToPage();
+        }
+
+        public IActionResult OnPostRemove(string productName, string variant)
+        {
+            var cart = CartService.GetCart(HttpContext.Session);
+            var item = cart.FirstOrDefault(i => i.ProductName == productName && i.Variant == variant);
+            
+            if (item != null)
+            {
+                cart.Remove(item);
+                HttpContext.Session.SetString("Cart", System.Text.Json.JsonSerializer.Serialize(cart));
+            }
+
+            return RedirectToPage();
+        }
+        
     }
 }

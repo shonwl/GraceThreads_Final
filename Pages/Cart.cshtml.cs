@@ -21,6 +21,12 @@ namespace GraceThreads.Pages
             return RedirectToPage();
         }
 
+        public IActionResult OnPostUpdateQuantity(string productName, string variant, int quantity)
+        {
+            CartService.UpdateQuantity(HttpContext.Session, productName, variant, quantity);
+            return RedirectToPage();
+        }
+
         public IActionResult OnPostClear()
         {
             CartService.Clear(HttpContext.Session);

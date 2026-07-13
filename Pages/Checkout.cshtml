@@ -14,20 +14,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
-        font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
         }
 
         body {
-        background: #0c0c0c;
+            background: #0c0c0c;
         }
 
         input::placeholder {
-        color: #666;
+            color: #666;
         }
 
         input:focus {
-        outline: none;
-        border-color: #f05a1a;
+            outline: none;
+            border-color: #f05a1a;
         }
     </style>
 </head>
@@ -35,7 +35,7 @@
 
     <!-- Promo bar -->
     <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
-        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over ₱1000 · Ephesians 2:8</span>
     </div>
 
     <!-- Nav -->
@@ -65,8 +65,8 @@
             <h1 class="font-black text-5xl text-neutral-100 mt-4">Checkout</h1>
 
             <div class="grid md:grid-cols-2 gap-12 mt-10">
-                <!-- Shipping form -->
-                <form method="post" asp-page="/OrderConfirmation" class="flex flex-col gap-4">
+                <!-- Shipping & Payment form -->
+                <form method="post" class="flex flex-col gap-4">
                     <span class="text-[11px] font-bold text-[#f05a1a] tracking-wide">Shipping Details</span>
 
                     <div>
@@ -97,14 +97,24 @@
                         </div>
                     </div>
 
-                    <span class="text-[11px] font-bold text-[#f05a1a] tracking-wide mt-4">Payment</span>
-                    <div class="border border-white/10 bg-[#161616] p-4 text-xs text-[#888888]">
-                        Payments are processed securely. By placing your order you authorize us to charge the payment method you provide.
+                    <span class="text-[11px] font-bold text-[#f05a1a] tracking-wide mt-4">Payment Method</span>
+                    
+                    <!-- GCash Selector -->
+                    <label class="flex items-center gap-3 border border-[#f05a1a] bg-[#f05a1a]/10 p-4 cursor-pointer rounded-sm">
+                        <input type="radio" name="paymentMethod" value="gcash" checked class="accent-[#f05a1a] w-4 h-4">
+                        <span class="text-sm font-bold text-neutral-100 flex-1">GCash (via PayMongo)</span>
+                        <svg viewBox="0 0 24 24" class="w-5 h-5 text-[#f05a1a]" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </label>
+
+                    <div class="border border-white/10 bg-[#161616] p-4 text-xs text-[#888888] mt-1">
+                        You will be redirected securely to GCash to complete your purchase. By placing your order, you authorize the secure payment.
                     </div>
 
                     <button type="submit"
                             class="bg-[#f05a1a] hover:bg-[#d94f14] transition text-white font-black text-sm py-4 mt-4">
-                        Place Order — $@Model.Total.ToString("0.00")
+                        Place Order — ₱@Model.Total.ToString("0.00")
                     </button>
                 </form>
 
@@ -123,21 +133,21 @@
                                     <span class="block text-[10px] text-[#888888] mt-0.5">@item.Variant</span>
                                     <span class="block text-[10px] text-[#888888] mt-0.5">Qty: @item.Quantity</span>
                                 </div>
-                                <span class="text-sm font-bold text-[#f05a1a]">$@((item.Price * item.Quantity).ToString("0.00"))</span>
+                                <span class="text-sm font-bold text-[#f05a1a]">₱@((item.Price * item.Quantity).ToString("0.00"))</span>
                             </div>
                         }
 
                         <div class="flex justify-between text-xs text-[#888888]">
                             <span>Subtotal</span>
-                            <span class="text-neutral-100">$@Model.Subtotal.ToString("0.00")</span>
+                            <span class="text-neutral-100">₱@Model.Subtotal.ToString("0.00")</span>
                         </div>
                         <div class="flex justify-between text-xs text-[#888888]">
                             <span>Shipping</span>
-                            <span class="text-neutral-100">@(Model.Shipping == 0 ? "Free" : "$" + Model.Shipping.ToString("0.00"))</span>
+                            <span class="text-neutral-100">@(Model.Shipping == 0 ? "Free" : "₱" + Model.Shipping.ToString("0.00"))</span>
                         </div>
                         <div class="flex justify-between text-base font-black border-t border-white/10 pt-3">
                             <span class="text-neutral-100">Total</span>
-                            <span class="text-[#f05a1a]">$@Model.Total.ToString("0.00")</span>
+                            <span class="text-[#f05a1a]">₱@Model.Total.ToString("0.00")</span>
                         </div>
                     </div>
                 </div>

@@ -39,6 +39,20 @@ namespace GraceThreads.Services
             SaveCart(session, cart);
         }
 
+        public static void UpdateQuantity(ISession session, string productName, string variant, int quantity)
+        {
+            var cart = GetCart(session);
+            var item = cart.FirstOrDefault(i => i.ProductName == productName && i.Variant == variant);
+            if (item != null)
+            {
+                if (quantity <= 0)
+                    RemoveItem(session, productName, variant);
+                else
+                    item.Quantity = quantity;
+                SaveCart(session, cart);
+            }
+        }
+
         public static void Clear(ISession session)
         {
             session.Remove(SessionKey);

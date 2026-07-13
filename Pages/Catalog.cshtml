@@ -2,7 +2,7 @@
 @model GraceThreads.Pages.CatalogModel
 @using GraceThreads.Models
 @{
-    Layout = null;
+    Layout = "_Layout";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -66,7 +66,7 @@
 
     <!-- Promo bar -->
     <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
-        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over ₱1000 · Ephesians 2:8</span>
     </div>
 
     <!-- Nav -->
@@ -86,7 +86,6 @@
                 <a href="/Home" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Home</a>
                 <a href="/Catalog" class="text-[11px] font-bold text-[#f05a1a]">Shop</a>
                 <a href="/Contact" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Contact</a>
-                <a href="/" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Sign Out</a>
             </nav>
 
             <div class="flex items-center gap-5">
@@ -159,7 +158,7 @@
                         <form method="post" asp-page-handler="AddToCart">
                             <input type="hidden" name="productName" value="Saved By Grace Tee" />
                             <input type="hidden" name="variant" value="Black — Ephesians 2:8" />
-                            <input type="hidden" name="price" value="45" />
+                            <input type="hidden" name="price" value="719" />
                             <input type="hidden" name="colorHex" value="#1a1a1a" />
                             <input type="hidden" name="imageUrl" value="/images/Black_Front.png" />
                             <button type="submit" class="w-full bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[10px] font-bold py-3.5">Add to Cart</button>
@@ -168,7 +167,7 @@
                     <div class="mt-3">
                         <span class="block text-[10px] text-[#888888]">Black — Ephesians 2:8</span>
                         <span class="block font-black text-sm text-neutral-100 mt-1">Saved By Grace Tee</span>
-                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">$45</span>
+                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">₱719</span>
                     </div>
                 </div>
 
@@ -181,7 +180,7 @@
                         <form method="post" asp-page-handler="AddToCart">
                             <input type="hidden" name="productName" value="Saved By Grace Tee" />
                             <input type="hidden" name="variant" value="White — Ephesians 2:8" />
-                            <input type="hidden" name="price" value="45" />
+                            <input type="hidden" name="price" value="719" />
                             <input type="hidden" name="colorHex" value="#f5f5f5" />
                             <input type="hidden" name="imageUrl" value="/images/White_Front.png" />
                             <button type="submit" class="w-full bg-[#f05a1a] hover:bg-[#d94f14] transition text-white text-[10px] font-bold py-3.5">Add to Cart</button>
@@ -190,7 +189,7 @@
                     <div class="mt-3">
                         <span class="block text-[10px] text-[#888888]">White — Ephesians 2:8</span>
                         <span class="block font-black text-sm text-neutral-100 mt-1">Saved By Grace Tee</span>
-                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">$45</span>
+                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">₱719</span>
                     </div>
                 </div>
 
@@ -209,7 +208,7 @@
                     <div class="mt-3">
                         <span class="block text-[10px] text-[#888888]">Black — Ephesians 2:8</span>
                         <span class="block font-black text-sm text-neutral-100 mt-1">Grace Hoodie</span>
-                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">$65</span>
+                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">₱719</span>
                     </div>
                 </div>
 
@@ -228,7 +227,7 @@
                     <div class="mt-3">
                         <span class="block text-[10px] text-[#888888]">Grey — Ephesians 2:8</span>
                         <span class="block font-black text-sm text-neutral-100 mt-1">Grace Hoodie</span>
-                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">$65</span>
+                        <span class="block font-bold text-sm text-[#f05a1a] mt-1">₱719</span>
                     </div>
                 </div>
             </div>
@@ -244,49 +243,6 @@
                 <div class="absolute inset-y-0 left-1/2 w-px bg-white/20 -translate-x-1/2"></div>
                 <span class="absolute bottom-4 left-6 text-[11px] font-black text-white tracking-wide">FRONT</span>
                 <span class="absolute bottom-4 right-6 text-[11px] font-black text-white tracking-wide">BACK</span>
-            </div>
-
-            <!-- Size guide -->
-            <div class="mt-16">
-                <h3 class="text-[11px] font-bold text-[#f05a1a] mb-4 tracking-wide">Size Guide</h3>
-                <div class="overflow-x-auto border border-white/10">
-                    <table class="w-full text-left text-xs">
-                        <thead>
-                            <tr class="bg-[#161616] text-[#888888]">
-                                <th class="px-4 py-3 font-bold">Size</th>
-                                <th class="px-4 py-3 font-bold">Chest (in)</th>
-                                <th class="px-4 py-3 font-bold">Length (in)</th>
-                                <th class="px-4 py-3 font-bold">Sleeve (in)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-[#cccccc]">
-                            <tr class="border-t border-white/10">
-                                <td class="px-4 py-3 font-bold text-[#f05a1a]">S</td>
-                                <td class="px-4 py-3">36–38</td>
-                                <td class="px-4 py-3">27</td>
-                                <td class="px-4 py-3">8</td>
-                            </tr>
-                            <tr class="border-t border-white/10">
-                                <td class="px-4 py-3 font-bold text-[#f05a1a]">M</td>
-                                <td class="px-4 py-3">39–41</td>
-                                <td class="px-4 py-3">28</td>
-                                <td class="px-4 py-3">8.5</td>
-                            </tr>
-                            <tr class="border-t border-white/10">
-                                <td class="px-4 py-3 font-bold text-[#f05a1a]">L</td>
-                                <td class="px-4 py-3">42–44</td>
-                                <td class="px-4 py-3">29</td>
-                                <td class="px-4 py-3">9</td>
-                            </tr>
-                            <tr class="border-t border-white/10">
-                                <td class="px-4 py-3 font-bold text-[#f05a1a]">XL</td>
-                                <td class="px-4 py-3">45–47</td>
-                                <td class="px-4 py-3">30</td>
-                                <td class="px-4 py-3">9.5</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
     </section>
@@ -350,12 +306,66 @@
 
     <script>
         function toggleCart() {
-        document.getElementById('cart-panel').classList.toggle('open');
-        document.getElementById('cart-overlay').classList.toggle('open');
+            document.getElementById('cart-panel').classList.toggle('open');
+            document.getElementById('cart-overlay').classList.toggle('open');
         }
         function toggleSearch() {
-        document.getElementById('search-bar').classList.toggle('open');
+            document.getElementById('search-bar').classList.toggle('open');
         }
+
+        // --- Handle ALL cart updates smoothly without full page reloads ---
+        document.addEventListener('submit', async function (e) {
+            const form = e.target;
+            
+            // Catch AddToCart, UpdateQuantity, and Remove actions
+            if (form.action.includes('handler=UpdateQuantity') || 
+                form.action.includes('handler=Remove') ||
+                form.action.includes('handler=AddToCart')) {
+                
+                e.preventDefault(); // Stop the reload
+
+                // Optional: Give visual feedback on the Add to Cart button
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerText;
+                const isAddToCart = form.action.includes('handler=AddToCart');
+                
+                if (isAddToCart) {
+                    submitBtn.innerText = "Adding...";
+                    submitBtn.disabled = true;
+                }
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form)
+                    });
+
+                    if (response.ok) {
+                        const htmlText = await response.text();
+                        
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(htmlText, 'text/html');
+                        
+                        const newCartInner = doc.getElementById('cart-panel').innerHTML;
+                        document.getElementById('cart-panel').innerHTML = newCartInner;
+
+                        // Auto-open the cart if they just added a new item
+                        if (isAddToCart) {
+                            document.getElementById('cart-panel').classList.add('open');
+                            document.getElementById('cart-overlay').classList.add('open');
+                        }
+                    }
+                } catch (err) {
+                    console.error('Failed to update cart seamlessly:', err);
+                } finally {
+                    // Reset the button
+                    if (isAddToCart) {
+                        submitBtn.innerText = originalText;
+                        submitBtn.disabled = false;
+                    }
+                }
+            }
+        });
     </script>
 
 </body>

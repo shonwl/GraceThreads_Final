@@ -26,12 +26,12 @@
 
     <!-- Promo bar -->
     <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
-        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over ₱1000 · Ephesians 2:8</span>
     </div>
 
     <!-- Nav -->
     <header class="border-b border-white/10">
-        <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+        <div class="max-w-7xl mx-auto h-16 relative flex items-center justify-between px-6">
             <a href="/Home" class="flex items-center gap-3">
                 <div class="w-[34px] h-[34px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
                     <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-6 h-6 object-contain">
@@ -41,7 +41,7 @@
                     <div class="font-medium text-[9px] text-[#888888] tracking-wide">We Wear What We Believe</div>
                 </div>
             </a>
-            <nav class="hidden md:flex items-center gap-8">
+            <nav class="hidden md:absolute md:left-1/2 md:-translate-x-1/2 md:flex items-center gap-8">
                 <a href="/Home" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Home</a>
                 <a href="/Catalog" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Shop</a>
                 <a href="/Contact" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Contact</a>
@@ -50,9 +50,9 @@
     </header>
 
     <!-- Cart contents -->
-    <section class="px-6 py-16">
-        <div class="max-w-4xl mx-auto">
-            <a href="/Catalog" class="text-[11px] font-bold text-[#888888] hover:text-white transition">← Back to Shop</a>
+<section class="px-6 py-16">
+    <div id="cart-container" class="max-w-4xl mx-auto"> 
+        <a href="/Catalog" class="text-[11px] font-bold text-[#888888] hover:text-white transition">← Back to Shop</a>
             <h1 class="font-black text-5xl text-neutral-100 mt-4">Your Cart</h1>
 
             @if (!Model.CartItems.Any())
@@ -82,13 +82,29 @@
                             <div class="flex-1">
                                 <span class="block font-black text-base text-neutral-100">@item.ProductName</span>
                                 <span class="block text-xs text-[#888888] mt-1">@item.Variant</span>
-                                <span class="block text-xs text-[#888888] mt-1">Qty: @item.Quantity</span>
+                                <div class="flex items-center gap-3 mt-2">
+                                    <form method="post" asp-page-handler="UpdateQuantity" class="flex items-center gap-2">
+                                        <input type="hidden" name="productName" value="@item.ProductName" />
+                                        <input type="hidden" name="variant" value="@item.Variant" />
+                                        <button type="submit" name="quantity" value="@(item.Quantity - 1)" aria-label="Decrease quantity" class="bg-[#222222] hover:bg-[#333333] transition text-[#888888] hover:text-white p-1 rounded">
+                                            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M5 12h14" stroke-linecap="round" />
+                                            </svg>
+                                        </button>
+                                        <span class="text-xs text-[#888888] w-6 text-center">@item.Quantity</span>
+                                        <button type="submit" name="quantity" value="@(item.Quantity + 1)" aria-label="Increase quantity" class="bg-[#222222] hover:bg-[#333333] transition text-[#888888] hover:text-white p-1 rounded">
+                                            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M12 5v14M5 12h14" stroke-linecap="round" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                            <span class="font-black text-lg text-[#f05a1a]">$@((item.Price * item.Quantity).ToString("0.00"))</span>
+                            <span class="font-black text-lg text-[#f05a1a]">₱@((item.Price * item.Quantity).ToString("0.00"))</span>
                             <form method="post" asp-page-handler="Remove">
                                 <input type="hidden" name="productName" value="@item.ProductName" />
                                 <input type="hidden" name="variant" value="@item.Variant" />
-                                <button type="submit" aria-label="Remove item" class="text-[#888888] hover:text-red-400 transition p-2">
+                                <button type="submit" aria-label="Delete item" class="text-[#888888] hover:text-red-400 transition p-2">
                                     <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" />
                                     </svg>
@@ -105,7 +121,7 @@
                     <div class="flex flex-col items-end gap-4">
                         <div class="flex items-center gap-4">
                             <span class="text-sm text-[#888888]">Total</span>
-                            <span class="font-black text-2xl text-neutral-100">$@Model.Total.ToString("0.00")</span>
+                            <span class="font-black text-2xl text-neutral-100">₱@Model.Total.ToString("0.00")</span>
                         </div>
                         <a href="/Checkout" class="bg-[#f05a1a] hover:bg-[#d94f14] transition text-white font-black text-sm px-10 py-4">
                             Proceed to Checkout
@@ -122,5 +138,58 @@
         <span class="block text-[10px] font-bold text-[#f05a1a] mt-1">Ephesians 2:8</span>
     </footer>
 
+    <script>
+        document.addEventListener('submit', async function (e) {
+            const form = e.target;
+            const submitter = e.submitter; // NEW: Figure out exactly which button was clicked
+            
+            // Catch Update, Remove, and Clear actions
+            if (form.action.includes('handler=UpdateQuantity') || 
+                form.action.includes('handler=Remove') ||
+                form.action.includes('handler=Clear')) {
+                
+                e.preventDefault(); // Stop the browser from reloading the page
+
+                // Fade out slightly to show it's loading
+                const cartContainer = document.getElementById('cart-container');
+                cartContainer.style.opacity = '0.5';
+                cartContainer.style.pointerEvents = 'none';
+
+                try {
+                    // Package up the form data
+                    const formData = new FormData(form);
+                    
+                    // NEW: If the clicked button has a name/value (like our + and - buttons), add it to the package!
+                    if (submitter && submitter.name) {
+                        formData.append(submitter.name, submitter.value);
+                    }
+
+                    // Send request in the background
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const htmlText = await response.text();
+                        
+                        // Parse the new page
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(htmlText, 'text/html');
+                        
+                        // Swap out the old cart HTML for the newly updated cart HTML
+                        const newCartInner = doc.getElementById('cart-container').innerHTML;
+                        cartContainer.innerHTML = newCartInner;
+                    }
+                } catch (err) {
+                    console.error('Failed to update cart seamlessly:', err);
+                } finally {
+                    // Restore visibility
+                    cartContainer.style.opacity = '1';
+                    cartContainer.style.pointerEvents = 'auto';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

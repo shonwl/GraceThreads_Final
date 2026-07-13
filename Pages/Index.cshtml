@@ -33,14 +33,9 @@
 </head>
 <body class="bg-[#0c0c0c] text-white">
 
-    <!-- Promo bar -->
-    <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
-        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
-    </div>
-
     <!-- Nav -->
     <header class="border-b border-white/10">
-        <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+        <div class="max-w-7xl mx-auto h-16 relative flex items-center justify-between px-6">
             <a href="/" class="flex items-center gap-3">
                 <div class="w-[34px] h-[34px] rounded-sm bg-[#1c1c1c] border border-white/10 flex items-center justify-center overflow-hidden">
                     <img src="/images/Grace_Threads_Logo_white_1.png" alt="Grace Threads logo" class="w-6 h-6 object-contain">
@@ -51,14 +46,14 @@
                 </div>
             </a>
 
-            <nav class="hidden md:flex items-center gap-8">
+            <nav class="absolute left-1/2 -translate-x-1/2 flex items-center gap-8">
                 <a href="/" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Home</a>
                 <a href="#" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Shop</a>
                 <a href="#" class="text-[11px] font-medium text-[#888888] hover:text-white transition">Contact</a>
                 <a href="/" class="text-[11px] font-bold text-[#f05a1a]">Login</a>
             </nav>
 
-            <div class="flex items-center gap-5">
+            <div class="hidden items-center gap-5">
                 <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="#cccccc" stroke-width="2">
                     <circle cx="11" cy="11" r="7" />
                     <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
@@ -92,7 +87,7 @@
             <!-- Card -->
             <div class="w-full max-w-[446px] bg-[#161616] border border-white/10 p-10">
                 <span class="block text-[11px] font-bold text-[#f05a1a] tracking-wide">Welcome Back</span>
-                <h1 class="font-black text-2xl text-neutral-100 mt-1">Sign In</h1>
+                <h1 class="font-black text-2xl text-neutral-100 mt-1">Admin - Sign In</h1>
 
                 @if (!string.IsNullOrEmpty(Model.SuccessMessage))
                 {
@@ -126,7 +121,6 @@
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <label class="text-[10px] font-bold text-[#888888]">Password</label>
-                            <a href="#" class="text-[10px] font-medium text-[#f05a1a]">Forgot Password?</a>
                         </div>
                         <div class="relative">
                             <svg viewBox="0 0 24 24" class="w-[15px] h-[15px] absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="#666666" stroke-width="2">
@@ -146,18 +140,6 @@
                     </button>
                 </form>
 
-                <!-- Divider -->
-                <div class="flex items-center gap-3 mt-6">
-                    <div class="h-px bg-white/10 flex-1"></div>
-                    <span class="text-[10px] text-[#888888]">or</span>
-                    <div class="h-px bg-white/10 flex-1"></div>
-                </div>
-
-                <!-- Sign up -->
-                <div class="text-center mt-6 text-sm">
-                    <span class="text-[#888888]">Don't have an account? </span>
-                    <a href="/Register" class="font-bold text-[#f05a1a]">Create one</a>
-                </div>
             </div>
 
             <a href="/" class="text-[10px] font-medium text-[#888888] mt-6 hover:text-white transition">← Back to Home</a>

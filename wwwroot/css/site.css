@@ -20,3 +20,36 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Inside wwwroot/css/site.css */
+
+/* Absolute safety net: Hide the chat widget if either panel has the 'open' class */
+#cart-panel.open ~ #chat-widget-container,
+#chat-panel.open ~ * #chat-widget-container,
+#chat-panel.open ~ #chat-widget-container,
+#chat-panel.open ~ * #chat-widget-container {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* --- Global Chat Panel Animations --- */
+
+/* Slide the chat panel onto the screen when open */
+#chat-panel.open {
+    transform: translateX(0);
+}
+
+/* Fade in the dark background overlay when open */
+#chat-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Forces the cart sidebar to float above aggressive third-party chatbot widgets */
+.offcanvas, #cartOffcanvas, .cart-sidebar { 
+    z-index: 2147483647 !important; 
+}
+
+#cart-panel, #cart-overlay {
+    z-index: 2147483647 !important;
+}

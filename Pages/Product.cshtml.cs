@@ -13,7 +13,7 @@ namespace GraceThreads.Pages
         public string ColorHex { get; set; } = "#1a1a1a";
         public string ImageFront { get; set; } = "/images/Black_Front.png";
         public List<string> Thumbnails { get; set; } = new();
-        public decimal Price { get; } = 45m;
+        public decimal Price { get; } = 719m;
         public List<CartItem> CartItems { get; set; } = new();
 
         public void OnGet(string color = "black")
@@ -55,8 +55,8 @@ namespace GraceThreads.Pages
             Color = string.Equals(color, "white", StringComparison.OrdinalIgnoreCase) ? "white" : "black";
             if (Color == "white")
             {
-                ColorLabel = "White";
-                ColorHex = "#f5f5f5";
+                ColorLabel = "#f5f5f5";
+                ColorHex = "#000000";
                 ImageFront = "/images/White_Front.png";
                 Thumbnails = new List<string>
                 {

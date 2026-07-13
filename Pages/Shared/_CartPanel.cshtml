@@ -32,28 +32,142 @@
     }
     else
     {
-        <div class="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-4">
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
             @foreach (var item in Model)
             {
-                <div class="flex gap-3 border-b border-white/10 pb-4">
-                    <div class="w-16 h-16 shrink-0" style="background-color:@item.ColorHex; opacity:0.85;"></div>
-                    <div class="flex-1">
-                        <span class="block font-bold text-sm text-neutral-100">@item.ProductName</span>
-                        <span class="block text-[10px] text-[#888888] mt-0.5">@item.Variant</span>
-                        <span class="block text-xs text-[#888888] mt-1">Qty: @item.Quantity</span>
+                <div class="flex gap-4 mb-6 relative">
+                    <!-- Image -->
+                    <div class="w-16 h-16 shrink-0 bg-[#e5e5e5]">
+                        <img src="@item.ImageUrl" alt="@item.ProductName" class="w-full h-full object-cover">
                     </div>
-                    <span class="font-bold text-sm text-[#f05a1a]">$@((item.Price * item.Quantity).ToString("0.00"))</span>
+                    
+                    <!-- Details (Added pr-8 here to create a safe zone for the absolute button) -->
+                    <div class="flex-1 pr-8">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-sm text-neutral-100">@item.ProductName</h4>
+                                <p class="text-xs text-[#888888] mt-1">@item.Variant</p>
+                            </div>
+                            <span class="font-bold text-sm text-[#f05a1a]">₱@((item.Price * item.Quantity).ToString("0.00"))</span>
+                        </div>
+                        
+                        <!-- Quantity Controls -->
+                        <div class="flex items-center gap-4 mt-3">
+                            <div class="flex items-center gap-3 bg-[#1a1a1a] rounded px-2 py-1">
+                                
+                                <!-- Decrease Button -->
+                                <form method="post" asp-page="/Catalog" asp-page-handler="UpdateQuantity" class="m-0 flex">
+                                    <input type="hidden" name="productName" value="@item.ProductName" />
+                                    <input type="hidden" name="variant" value="@item.Variant" />
+                                    <input type="hidden" name="amount" value="-1" />
+                                    <button type="submit" class="text-[#888888] hover:text-white transition w-4 h-4 flex items-center justify-center">−</button>
+                                </form>
+
+                                <span class="text-xs font-bold text-neutral-100 w-4 text-center">@item.Quantity</span>
+                                
+                                <!-- Increase Button -->
+                                <form method="post" asp-page="/Catalog" asp-page-handler="UpdateQuantity" class="m-0 flex">
+                                    <input type="hidden" name="productName" value="@item.ProductName" />
+                                    <input type="hidden" name="variant" value="@item.Variant" />
+                                    <input type="hidden" name="amount" value="1" />
+                                    <button type="submit" class="text-[#888888] hover:text-white transition w-4 h-4 flex items-center justify-center">+</button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Absolute Remove Button (Now has room to breathe!) -->
+                    <form method="post" asp-page="/Catalog" asp-page-handler="Remove" class="absolute top-0 right-0 m-0">
+                        <input type="hidden" name="productName" value="@item.ProductName" />
+                        <input type="hidden" name="variant" value="@item.Variant" />
+                        <button type="submit" class="text-[#888888] hover:text-red-400 transition p-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </form>
+                    
                 </div>
             }
         </div>
-        <div class="px-6 py-5 border-t border-white/10">
+        
+        <div class="p-4 border-t border-white/10 bg-[#161616]">
             <div class="flex justify-between items-center mb-4">
-                <span class="text-xs text-[#888888]">Subtotal</span>
-                <span class="font-black text-lg text-neutral-100">$@(Model.Sum(i => i.Price * i.Quantity).ToString("0.00"))</span>
+                <span class="text-sm text-[#888888]">Subtotal</span>
+                <span class="font-bold text-lg text-neutral-100">₱@Model.Sum(i => i.Price * i.Quantity).ToString("0.00")</span>
             </div>
-            <a href="/Cart" class="block text-center bg-[#f05a1a] hover:bg-[#d94f14] transition text-white font-black text-[11px] py-4">
+            <a href="/Cart" class="block w-full py-3 bg-[#f05a1a] hover:bg-[#d04a12] text-white text-center font-bold text-sm transition rounded-sm">
                 View Cart & Checkout
             </a>
         </div>
     }
 </aside>
+
+<script>
+async function updateQuantity(productName, variant, quantity) {
+    try {
+        const response = await fetch('/Cart?handler=UpdateQuantity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                productName: productName,
+                variant: variant,
+                quantity: quantity
+            })
+        });
+
+        if (response.ok) {
+            // Refresh cart display
+            await refreshCartPanel();
+        }
+    } catch (error) {
+        console.error('Error updating quantity:', error);
+    }
+}
+
+async function removeItem(productName, variant) {
+    try {
+        const response = await fetch('/Cart?handler=Remove', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                productName: productName,
+                variant: variant
+            })
+        });
+
+        if (response.ok) {
+            // Refresh cart display
+            await refreshCartPanel();
+        }
+    } catch (error) {
+        console.error('Error removing item:', error);
+    }
+}
+
+async function refreshCartPanel() {
+    try {
+        // Fetch the current page to get updated cart panel
+        const response = await fetch(window.location.pathname);
+        const html = await response.text();
+        
+        // Create a temporary DOM to parse the response
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        
+        // Find the new cart panel in the fetched HTML
+        const newCartPanel = temp.querySelector('aside#cart-panel');
+        const oldCartPanel = document.querySelector('aside#cart-panel');
+        
+        if (newCartPanel && oldCartPanel) {
+            // Replace the old cart panel with the new one
+            oldCartPanel.replaceWith(newCartPanel);
+        }
+    } catch (error) {
+        console.error('Error refreshing cart:', error);
+    }
+}
+</script>
