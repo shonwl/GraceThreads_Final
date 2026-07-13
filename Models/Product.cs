@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GraceThreads.Models
 {
     public class Product
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] // Tells EF Core we will pass the ID manually
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Variant { get; set; } = string.Empty;
