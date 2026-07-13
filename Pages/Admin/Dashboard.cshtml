@@ -46,7 +46,7 @@
 <body class="bg-[#0c0c0c] text-white">
 
     <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
-        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over ₱60 · Ephesians 2:8</span>
     </div>
 
     <header class="border-b border-white/10">
@@ -96,8 +96,8 @@
         <main class="flex-1 px-8 py-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-[#161616] border border-white/10 p-5">
-                    <span class="text-[#f05a1a] text-lg">$</span>
-                    <span class="block font-black text-2xl text-neutral-100 mt-2">$@Model.TotalRevenue.ToString("0")</span>
+                    <span class="text-[#f05a1a] text-lg">₱</span>
+                    <span class="block font-black text-2xl text-neutral-100 mt-2">₱@Model.TotalRevenue.ToString("0")</span>
                     <span class="block text-[10px] text-[#888888] mt-1">Total Revenue</span>
                 </div>
                 <div class="bg-[#161616] border border-white/10 p-5">
@@ -132,7 +132,7 @@
                             </div>
                             <div class="flex items-center gap-3">
                                 <span class="text-[9px] font-bold px-2 py-1 @(order.Status == "Delivered" ? "bg-green-500/10 text-green-400" : order.Status == "Shipped" ? "bg-blue-500/10 text-blue-400" : "bg-[#f05a1a]/10 text-[#f05a1a]")">@order.Status</span>
-                                <span class="text-xs font-bold text-[#f05a1a]">$@order.Total.ToString("0")</span>
+                                <span class="text-xs font-bold text-[#f05a1a]">₱@order.Total.ToString("0")</span>
                             </div>
                         </div>
                     }
@@ -154,7 +154,7 @@
                                     <span class="block text-xs font-bold text-neutral-100">@product.Name — @product.Variant.Split(' ')[0]</span>
                                 </div>
                             </div>
-                            <span class="text-xs font-bold text-[#f05a1a]">$@product.Price.ToString("0")</span>
+                            <span class="text-xs font-bold text-[#f05a1a]">₱@product.Price.ToString("0")</span>
                         </div>
                     }
                 </div>

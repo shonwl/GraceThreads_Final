@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GraceThreads.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260713080311_AddGuestCheckoutFields")]
-    partial class AddGuestCheckoutFields
+    [Migration("20260713191210_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -46,7 +46,7 @@
 <body class="bg-[#0c0c0c] text-white">
 
     <div class="bg-[#f05a1a] text-white text-center py-2.5 px-4">
-        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over $60 · Ephesians 2:8</span>
+        <span class="text-[11px] font-bold tracking-wide">Free Shipping on All Orders Over ₱60 · Ephesians 2:8</span>
     </div>
 
     <header class="border-b border-white/10">
@@ -109,7 +109,7 @@
                                 <td class="px-4 py-3">
                                     <span class="text-[9px] font-bold px-2 py-1 @(o.Status == "Delivered" ? "bg-green-500/10 text-green-400" : o.Status == "Shipped" ? "bg-blue-500/10 text-blue-400" : "bg-[#f05a1a]/10 text-[#f05a1a]")">@o.Status</span>
                                 </td>
-                                <td class="px-4 py-3 font-bold text-[#f05a1a]">$@o.Total.ToString("0")</td>
+                                <td class="px-4 py-3 font-bold text-[#f05a1a]">₱@o.Total.ToString("0")</td>
                             </tr>
                         }
                     </tbody>
